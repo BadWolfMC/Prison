@@ -14,7 +14,10 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-02-15
+# 3.3.0-alpha.19f 2025-02-25
+
+
+* **Ranks: Setup the PrisonRanks so getInstance() will not return a null and to ensure that isEnabled() returns false if Ranks is not enabled through module configs.**
 
 
 * **RankupMax: Fix  a bug where after successfully ranking up a few ranks, it always shows an error message related to the last attempt because the player cannot afford the next rank.**

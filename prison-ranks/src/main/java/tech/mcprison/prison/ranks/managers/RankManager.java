@@ -85,6 +85,8 @@ public class RankManager
 
     private List<PlaceHolderKey> translatedPlaceHolderKeys;
     
+    private transient boolean enabled;
+    
     public enum RanksByLadderOptions {
     	playersOnly("players"),
     	allRanks("all"),
@@ -124,19 +126,36 @@ public class RankManager
      * Constructor
      */
 
+    
+    public RankManager() {
+    	this.collection = null;
+    	
+    	this.loadedRanks = new ArrayList<>();
+    	this.ranksByName = new TreeMap<>();
+    	this.ranksById = new TreeMap<>();
+    	
+    	this.enabled = false;
+    }
+    
     /**
      * Instantiate this {@link RankManager}.
      */
     public RankManager(Collection collection) {
+    	this();
+    	
+    	this.enabled = true;
+    	
         this.collection = collection;
         
-        this.loadedRanks = new ArrayList<>();
-        this.ranksByName = new TreeMap<>();
-        this.ranksById = new TreeMap<>();
     }
 
     
-    private void addRank( Rank rank ) {
+    public boolean isEnabled() {
+		return enabled;
+	}
+    
+
+	private void addRank( Rank rank ) {
     	if ( rank != null ) {
     		getLoadedRanks().add( rank );
     		String rankName = rank.getName();
@@ -359,7 +378,9 @@ public class RankManager
      * @return
      */
     public Rank getRank(String name) {
-    	return name == null ? null : getRanksByName().get( name.toLowerCase() );
+    	return name == null || !isEnabled() ? 
+    			null : 
+    				getRanksByName().get( name.toLowerCase() );
     }
     
     

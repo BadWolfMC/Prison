@@ -1369,7 +1369,9 @@ public class SpigotPlatform
 			}
 			
 			else if ( sourceElement.getModuleElementType() == ModuleElementType.RANK && 
-					sourceElement instanceof Rank ) {
+					sourceElement instanceof Rank && 
+					PrisonRanks.getInstance().isEnabled()
+					) {
 				// If we have an instance of a mine, then we know that module has been
 				// enabled.
 				
@@ -1378,6 +1380,7 @@ public class SpigotPlatform
 				// name.  If found, then link.
 				if ( targetElementType != null && targetElementType == ModuleElementType.MINE &&
 						PrisonMines.getInstance() != null && PrisonMines.getInstance().isEnabled() ) {
+					
 					MineManager mm = PrisonMines.getInstance().getMineManager();
 					if ( mm != null ) {
 						Mine mine = mm.getMine( name );
@@ -1427,7 +1430,8 @@ public class SpigotPlatform
 				// We need to confirm targetElementType is ranks, then we need to check to
 				// ensure the rank module is active, then search for a rank with the given
 				// name.  If found, then link.
-				if ( elementB != null && elementB.getModuleElementType() == ModuleElementType.RANK ) {
+				if ( elementB != null && elementB.getModuleElementType() == ModuleElementType.RANK &&
+						PrisonRanks.getInstance().isEnabled() ) {
 					
 					RankManager rm = PrisonRanks.getInstance().getRankManager();
 					if ( rm != null ) {
@@ -3539,8 +3543,14 @@ public class SpigotPlatform
 	@Override
 	public void listAllMines(tech.mcprison.prison.internal.CommandSender sender, Player player) {
 
-		RankPlayer rPlayer = PrisonRanks.getInstance().getPlayerManager().getPlayer(player);
 		List<Mine> mines = new ArrayList<>();
+
+		RankPlayer rPlayer = null;
+		
+		if ( PrisonRanks.getInstance().isEnabled() ) {
+			rPlayer = 
+					PrisonRanks.getInstance().getPlayerManager().getPlayer(player);
+		}
 		
 		if ( rPlayer != null ) {
 			
@@ -3653,7 +3663,13 @@ public class SpigotPlatform
 	@Override
 	public RankLadder getRankLadder(String ladderName) {
 		
-		RankLadder results = PrisonRanks.getInstance().getLadderManager().getLadder( ladderName );
+		RankLadder results = null;
+		
+		if ( PrisonRanks.getInstance().isEnabled() ) {
+			results = 
+					PrisonRanks.getInstance().getLadderManager().getLadder( ladderName );
+		}
+		
 		return results;
 	}
 	

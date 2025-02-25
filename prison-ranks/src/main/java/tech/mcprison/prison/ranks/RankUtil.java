@@ -352,7 +352,8 @@ public class RankUtil
 
     	Output.get().logDebug( DebugTarget.rankup, "Rankup: rankupPlayerInternal: ");
     	
-        RankLadder ladder = PrisonRanks.getInstance().getLadderManager().getLadder(ladderName);
+        RankLadder ladder = !PrisonRanks.getInstance().isEnabled() ? null :
+        		PrisonRanks.getInstance().getLadderManager().getLadder(ladderName);
         if( ladder == null ) {
         	results.addTransaction( RankupStatus.RANKUP_FAILURE_COULD_NOT_LOAD_LADDER, RankupTransactions.failed_ladder );
         	return;

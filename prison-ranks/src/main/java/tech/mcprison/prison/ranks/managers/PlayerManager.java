@@ -78,20 +78,33 @@ public class PlayerManager
     private List<PlaceHolderKey> translatedPlaceHolderKeys;
     
     private transient Set<String> playerErrors;
+    
+    private transient boolean enabled = false;
 
     public PlayerManager(Collection collection) {
     	super("PlayerManager");
     	
-        this.collection = collection;
         
         this.players = new ArrayList<>();
         this.playersByName = new TreeMap<>();
         
         this.playerErrors = new HashSet<>();
+
+        if ( collection == null ) {
+        	this.enabled = false;
+        	
+        	this.collection = null;
+        }
+        else {
+        	
+        	this.collection = collection;
+        	
+        	Prison.get().getEventBus().register(this);
+        }
         
-        
-        Prison.get().getEventBus().register(this);
     }
+    
+    
 
     /*
      * Methods
@@ -122,7 +135,13 @@ public class PlayerManager
 //        }
 //    }
 
-    /**
+    public boolean isEnabled() {
+		return enabled;
+	}
+
+
+
+	/**
      * Loads every player in the specified playerFolder.
      *
      * @throws IOException If one of the files could not be read, or if the playerFolder does not exist.
@@ -242,7 +261,7 @@ public class PlayerManager
      */
 	public void checkPlayerDefaultRank( RankPlayer rPlayer ) {
 
-		if ( rPlayer.getPlayerRankDefault() == null ) {
+		if ( isEnabled() && rPlayer.getPlayerRankDefault() == null ) {
 
 			 // Try to perform the first join processing to give them the default rank:
 	        RankPlayerFactory rankPlayerFactory = new RankPlayerFactory();

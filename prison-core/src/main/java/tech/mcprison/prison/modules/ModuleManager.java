@@ -72,12 +72,21 @@ public class ModuleManager {
      * Register a new module.
      */
     public void registerModule(Module module) {
-        if ( getModule(module.getName()) == null ) {
-        	// Module does not exist, so add it:
-        	modules.add(module);
-        	enableModule(module);
+    	
+    	if ( module != null ) {
+    		
+    		// If module already exists, remove it so it can be added:
+    		if ( getModule(module.getName()) != null ) {
+    			removeModule( module.getName() );
+    		}
+    		
+    		if ( getModule(module.getName()) == null ) {
+    			// Module does not exist, so add it:
+    			modules.add(module);
+    			enableModule(module);
 //            return; // Already added
-        }
+    		}
+    	}
     }
 
     private void validateVersion(Module module) {
@@ -172,6 +181,26 @@ public class ModuleManager {
     	
 //        return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name))
 //            .findFirst();
+    }
+    
+    /**
+     * Removes a module, if its already been added, by name.
+     * 
+     * @param name
+     * @return
+     */
+    public boolean removeModule( String name ) {
+    	Module results = null;
+    	
+    	for (Module module : getModules() ) {
+			
+    		if ( module.getName().equalsIgnoreCase(name) ) {
+    			results = module;
+    			break;
+    		}
+		}
+    	
+    	return results == null ? false : getModules().remove( results );
     }
 
     /**

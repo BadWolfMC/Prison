@@ -437,7 +437,8 @@ public class SpigotOfflinePlayer
 	}
 
 	public RankPlayer getRankPlayer() {
-		if ( rankPlayer == null ) {
+		if ( rankPlayer == null && PrisonRanks.getInstance() != null &&
+				PrisonRanks.getInstance().isEnabled() ) {
 			rankPlayer = PrisonRanks.getInstance().getPlayerManager().getPlayer( this );
 		}
 		return rankPlayer;

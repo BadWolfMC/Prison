@@ -164,7 +164,13 @@ public abstract class Module implements PluginEntity {
     }
 
     public boolean isEnabled() {
-        return status.getStatus() == ModuleStatus.Status.ENABLED;
+    	boolean results = false;
+    	
+    	if ( status != null && status.getStatus() != null ) {
+    		results = status.getStatus() == ModuleStatus.Status.ENABLED;
+    	}
+        
+        return results;
     }
 
     public void setEnabled(boolean enabled) {

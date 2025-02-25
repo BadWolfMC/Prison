@@ -94,12 +94,22 @@ public class PrisonRanks
      */
 
     public static PrisonRanks getInstance() {
+    	if ( instance == null ) {
+    		synchronized (PrisonRanks.class) {
+    			if ( instance == null ) {
+    				instance = new PrisonRanks( "disabled" );
+    				instance.setEnabled( false );
+    			}
+			}
+    	}
         return instance;
     }
 
     @Override 
     public void enable() {
         instance = this;
+        
+        setEnabled( true );
 
         this.localeManager = new LocaleManager(this, "lang/ranks");
         
@@ -461,6 +471,7 @@ public class PrisonRanks
      */
     @Override 
     public void disable() {
+    	setEnabled( false );
     }
     
 
@@ -550,6 +561,9 @@ public class PrisonRanks
     
 
     public RankManager getRankManager() {
+    	if ( rankManager == null && !isEnabled() ) {
+    		rankManager = new RankManager();
+    	}
         return rankManager;
     }
 
@@ -558,6 +572,10 @@ public class PrisonRanks
     }
 
     public PlayerManager getPlayerManager() {
+    	
+    	if ( playerManager == null && !isEnabled() ) {
+    		playerManager = new PlayerManager( null );
+    	}
         return playerManager;
     }
 

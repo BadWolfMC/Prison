@@ -239,7 +239,7 @@ public class GuiConfig extends SpigotConfigComponents{
         
         if ( conf.get( "Options.Ranks.MaterialType" ) == null ) {
         	
-        	if ( PrisonRanks.getInstance() != null ) {
+        	if ( PrisonRanks.getInstance() != null && PrisonRanks.getInstance().isEnabled() ) {
         		
         		LinkedHashMap<String,String> map = new LinkedHashMap<>();
         		
@@ -339,6 +339,7 @@ public class GuiConfig extends SpigotConfigComponents{
         if ( conf.get( "Options.Ranks.GuiItemNames" ) == null ) {
         	
         	if ( PrisonRanks.getInstance() != null &&
+        			PrisonRanks.getInstance().isEnabled() &&
         			PrisonRanks.getInstance().getRankManager() != null && 
     					PrisonRanks.getInstance().getRankManager().getRanks() != null &&
     						PrisonRanks.getInstance().getRankManager().getRanks().size() > 0 ) {

@@ -1706,7 +1706,7 @@ public class ListenersPrisonManager
     private void laddersGUI(InventoryClickEvent e, Player p, String buttonNameMain, Module module ) {
 
         // Check if the Ranks module's loaded.
-        if(!(module instanceof PrisonRanks)){
+        if(!(module instanceof PrisonRanks) || !PrisonRanks.getInstance().isEnabled() ){
             Output.get().sendWarn(new SpigotPlayer(p), "The GUI can't open because the &3Rank module &cisn't loaded");
             p.closeInventory();
             e.setCancelled(true);
@@ -1773,6 +1773,13 @@ public class ListenersPrisonManager
 //            gui.open();
 //            return;
 //        }
+    	
+        if ( !PrisonRanks.getInstance().isEnabled() ) {
+        	
+        	Output.get().sendWarn(new SpigotPlayer(p), "&cPrison ranks are not enabled.");
+        	return;
+        }
+        
 
         // Get the rank.
         Rank rank = PrisonRanks.getInstance().getRankManager().getRank(buttonNameMain);
@@ -1883,6 +1890,12 @@ public class ListenersPrisonManager
         String buttonName = ( parts.length >= 1 ? parts[0] : "");
         String rankName = (parts.length >= 2 ? parts[1] : "-rankHasNoName-");
 
+        if ( !PrisonRanks.getInstance().isEnabled() ) {
+        	
+        	Output.get().sendWarn(new SpigotPlayer(p), "&cPrison ranks are not enabled.");
+        	return;
+        }
+        
         // Get the rank.
         Rank rank = PrisonRanks.getInstance().getRankManager().getRank(rankName);
 
