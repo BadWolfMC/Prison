@@ -277,7 +277,8 @@ public class MinesCommands
     public void preventDropsBlockCommand(CommandSender sender,
     		@Arg(name = "mineName", description = "The name of the mine to view.") String mineName,
     		@Arg(name = "blockName", description = "The block's name") String blockName,
-    		@Arg(name = "preventDrops", description = "Prevent the block from dropping anything " +
+    		@Arg(name = "preventDrops", description = "Prevent the block from dropping anything "
+    				+ "and prevent payment for the breakage. A value of 'true' will prevent the drops. " +
     				"[true false]",
     				def = "false") String preventDrops ) {
     	

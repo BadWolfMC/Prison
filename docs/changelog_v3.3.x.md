@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-25
 
 
+* **Mines block preventDrops: Improve the help documentation so it's clearer on what it actually does and how to use the command.**
+
+
 * **PrisonRanks: A couple of other changes to help ensure there are no issues if Ranks are disabled.**
 
 
