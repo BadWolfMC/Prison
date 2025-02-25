@@ -795,6 +795,8 @@ public class PrisonSpigotAPI {
 			boolean completelySilent = notifyPlayerEarned || notifyPlayerDelay || notifyPlayerEarningDelay || playSoundOnSellAll;
 			
 			SpigotPlayer sPlayer = new SpigotPlayer( player );
+			
+			
 			RankPlayer rankPlayer = sPlayer.getRankPlayer();
 //			RankPlayer rankPlayer = PrisonRanks.getInstance().getPlayerManager().getPlayer(sPlayer.getUUID(), sPlayer.getName());
 			
@@ -803,7 +805,13 @@ public class PrisonSpigotAPI {
 //        if (!sellInputArrayListOnly) {
 //            removeSellableItems(p);
 //        }
-			rankPlayer.addBalance(currency, amount);
+			if ( rankPlayer != null ) {
+				
+				rankPlayer.addBalance(currency, amount);
+			}
+			else {
+				sPlayer.addBalance(currency, amount);
+			}
 			
 			if ( getPrisonSellAll().isSellAllDelayEnabled ){
 				getPrisonSellAll().addToDelay(player);

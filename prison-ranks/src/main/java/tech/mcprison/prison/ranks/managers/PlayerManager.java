@@ -532,7 +532,10 @@ public class PlayerManager
     		// add them a second time.
     		RankPlayer rPlayer = player.getRankPlayer();
     		
-    		rPlayer.doNothing();
+    		if ( rPlayer != null ) {
+    			
+    			rPlayer.doNothing();
+    		}
     	}
     }
     
