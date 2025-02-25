@@ -138,7 +138,7 @@ public class AutoFeaturesFileConfig {
 		    	blockBreakEvents__ReadMe(blockBreakEvents, 
 		    			"Use the following event priorities with the blockBreakEvents: " +
 		    			"DISABLED, LOWEST, LOW, NORMAL, HIGH, HIGHEST, BLOCKEVENTS, MONITOR, " +
-		    			"ACESS, ACCESSBLOCKEVENTS, ACCESSMONITOR"),
+		    			"ACCESS, ACCESSBLOCKEVENTS, ACCESSMONITOR"),
 		    	
 		    	blockBreakEvents__ReadMe2(blockBreakEvents, 
 		    			"MONITOR: Processed even if event is canceled. Includes block counts, "
