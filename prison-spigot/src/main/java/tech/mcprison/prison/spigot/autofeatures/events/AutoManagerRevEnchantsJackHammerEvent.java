@@ -22,6 +22,7 @@ import tech.mcprison.prison.mines.features.MineBlockEvent.BlockEventType;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.SpigotPrison;
 import tech.mcprison.prison.spigot.SpigotUtil;
+import tech.mcprison.prison.spigot.api.InventoryFullEvent;
 import tech.mcprison.prison.spigot.api.PrisonMinesBlockBreakEvent;
 import tech.mcprison.prison.spigot.autofeatures.AutoManagerFeatures;
 import tech.mcprison.prison.spigot.block.BlockBreakPriority;
@@ -446,7 +447,10 @@ public class AutoManagerRevEnchantsJackHammerEvent
 //    			}
     		}
 			
-	
+    		if ( pmEvent.getSpigotPlayer().isInventoryFull() ) {
+    			
+    			InventoryFullEvent.fireInventoryFullEvent( pmEvent.getPlayer() );
+    		}
 		}
 		
     	printDebugInfo( pmEvent, start );

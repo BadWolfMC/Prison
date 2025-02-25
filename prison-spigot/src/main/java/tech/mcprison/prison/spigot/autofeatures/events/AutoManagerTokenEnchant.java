@@ -19,6 +19,7 @@ import tech.mcprison.prison.autofeatures.AutoFeaturesFileConfig.AutoFeatures;
 import tech.mcprison.prison.mines.features.MineBlockEvent.BlockEventType;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.SpigotPrison;
+import tech.mcprison.prison.spigot.api.InventoryFullEvent;
 import tech.mcprison.prison.spigot.api.PrisonMinesBlockBreakEvent;
 import tech.mcprison.prison.spigot.autofeatures.AutoManagerFeatures;
 import tech.mcprison.prison.spigot.block.BlockBreakPriority;
@@ -473,7 +474,10 @@ public class AutoManagerTokenEnchant
 //    			}
     		}
     		
+    		if ( pmEvent.getSpigotPlayer().isInventoryFull() ) {
     			
+    			InventoryFullEvent.fireInventoryFullEvent( pmEvent.getPlayer() );
+    		}
     	}
     	
     	printDebugInfo( pmEvent, start );

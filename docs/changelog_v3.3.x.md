@@ -17,6 +17,11 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-25
 
 
+* **InventoryFullEvent: Start to setup a prison based event that will fire when prison detects that the inventory object is full.**
+This is useful for when other plugins, or customization to prison needs to perform an action when the inventory is full, such as handling a custom sell all action.
+This new event offers cancel, but there is nothing to cancel within prison since canceling the event will not alter the inventory.  It can be used to signal to other plugins that the event was handled by another plugin.
+
+
 * **Mines block preventDrops: Improve the help documentation so it's clearer on what it actually does and how to use the command.**
 
 
