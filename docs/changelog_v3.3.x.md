@@ -17,6 +17,15 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-28
 
 
+* **Bug fix: CommandSender: Was causing a type cast exception when trying to TP a player from the console.**
+The CommandSender was assuming the sender was always a player object, when it shouldn't have been doing that.
+
+
+* **Bug fix: CommandSender: Was causing a type cast exception when trying to TP a player from the console.**
+The CommandSender was assuming the sender was always a player object, when it shouldn't have been doing that.
+
+
+
 * **Players:  CommandSender:  Added a new transient field miscText that can now be used to return a message to the caller.**
 For the command '/mines tp' if a player tries to tp to their current rank's mines, and if that rank does not have any mines connected to it, it will now step back through all prior ranks until it finds a mine to TP the player to.
 This returns a message that can be used, indicating the current rank, but indicates the next highest rank that had a mine.

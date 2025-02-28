@@ -325,8 +325,17 @@ public class SpigotCommandSender
 		
 		if ( PrisonRanks.getInstance().isEnabled() ) {
 			
-			rankPlayer = PrisonRanks.getInstance().getPlayerManager()
-					.getPlayer( (Player) this );
+			if ( isPlayer() ) {
+				
+				rankPlayer = PrisonRanks.getInstance().getPlayerManager()
+						.getPlayer( (Player) this );
+			}
+			else {
+				rankPlayer = PrisonRanks.getInstance().getPlayerManager()
+						.getPlayer( null, this.getName() );
+				
+			}
+			
 		}
 		return rankPlayer;
 	}
