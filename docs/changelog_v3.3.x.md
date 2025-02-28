@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-28
 
 
+* **MineBombs:  Improvements to the command '/prison utils bomb list' command to better format the information and include some missing details.**
+
+
 * **Bug fix: CommandSender: Was causing a type cast exception when trying to TP a player from the console.**
 The CommandSender was assuming the sender was always a player object, when it shouldn't have been doing that.
 

@@ -522,7 +522,7 @@ public class PrisonUtilsMineBombs
 			if ( options != null && options.toLowerCase().contains( "animations" ) ) {
 				// exit after showing the list of mine bomb animations:
 				
-				messages.add( "&7Animations Patterns:" );
+				messages.add( "&7Mine Bomb Animation Patterns:" );
 				
 				List<String> animations = AnimationPattern.asList();
 				messages.addAll( Text.formatColumnsFromList( animations, 4 ) );
@@ -535,7 +535,7 @@ public class PrisonUtilsMineBombs
 			if ( options != null && options.toLowerCase().contains( "shapes" ) ) {
 				// exit after showing shapes:
 				
-				messages.add( "&7Shapes:" );
+				messages.add( "&7Mine Bomb Shapes:" );
 				List<String> shapes = ExplosionShape.asList();
 				messages.addAll( Text.formatColumnsFromList( shapes, 4 ) );
 				
@@ -630,33 +630,77 @@ public class PrisonUtilsMineBombs
 			}
 			
 			
-			DecimalFormat dFmt = new DecimalFormat( "#,##0.000" );
+			// support bomb name fragments? 
 			
+			DecimalFormat dFmt = new DecimalFormat( "#,##0.000" );
+			DecimalFormat iFmt = new DecimalFormat( "#,##0" );
+			
+			
+			String h1 = "&3Prison Mine Bomb Listing:";
+			messages.add( h1 );
+
+			// Footers:
+			String f1 = "  &b(&cThrSp&b=Throw Speed, &cCDwn&b=Cool Down Ticks, &cFuse&b=Fuse Delay Ticks)";
+			String f2 = "  &b(&cAutoSell&b=Forced AutoSell, &cBlkCnt&b=Add to player block counts)";
+			
+			String f3 = "  &b(&cAPat&b=Animation Pattern, &cASp&b=Animation Speed, &cARad&b=Animation Radius)";
+			String f4 = "  &b(&cARadDel&b=Animation Radius Delta)";
+
 			
 			Set<String> keys = mBombs.getConfigData().getBombs().keySet();
 			for ( String key : keys ) {
 				
+				
 				MineBombData bomb = mBombs.getConfigData().getBombs().get( key );
 				
-				String message = String.format( 
-						"&7%-12s    &3AnimationPattern & Speed: &7%s %s   &3Throw Speed: &7(%s - %s)", 
-						bomb.getName(), 
-						bomb.getAnimationPattern().name(),
-						dFmt.format( bomb.getAnimationSpeed() ),
-						dFmt.format( bomb.getThrowVelocityLow() ),
-						dFmt.format( bomb.getThrowVelocityHigh() )
-						);
 				
-				messages.add( message );
+				if ( bomb.getName().trim().length() > 0 && 
+						!bomb.getName().toLowerCase().contains(options.trim().toLowerCase())) {
+					continue;
+				}
+				
+				
+				String msg1 = String.format( 
+						"&7%s", 
+						bomb.getName()
+						);
+				messages.add( msg1 );
+				
 				
 				
 				String msg2 = String.format( 
-						"      &3FuseDelayTicks: &7%d   &3CooldownTicks: &7%d", 
-						bomb.getFuseDelayTicks(),
-						bomb.getCooldownTicks()
+						"  &3ThrSp: &7(%s - %s)  &3CDwn: &7%s   &3Fuse: &7%s   &3AutoSell: &7%s   "
+						+ "&3BlkCnt: &7%s   &3Small: &7%s", 
+						dFmt.format( bomb.getThrowVelocityLow() ),
+						dFmt.format( bomb.getThrowVelocityHigh() ),
+						iFmt.format( bomb.getCooldownTicks() ),
+						iFmt.format( bomb.getFuseDelayTicks() ),
+						(bomb.isAutosell() ? "&aOn" : "&cOff"),
+						(bomb.isApplyToPlayersBlockCount() ? "&aOn" : "&cOff"),
+						(bomb.isSmall() ? "&aOn" : "&cOff")
 						);
 				
 				messages.add( msg2 );
+				
+				
+
+				
+				String msg3 = String.format( 
+						"  &3APat: &7%s  &3ASp: &7%s   &3ARad: &7%s   &3ARadDel: &7%s   "
+						+ "&3ASpn: &7%s", 
+						bomb.getAnimationPattern().name(),
+						dFmt.format( bomb.getAnimationSpeed() ),
+						dFmt.format( bomb.getAnimationRadius() ),
+						dFmt.format( bomb.getAnimationRadiusDelta() ),
+						dFmt.format( bomb.getAnimationSpinSpeed() )
+						);
+				
+//				bomb.getAnimationOffset();
+				
+				
+				
+				messages.add( msg3 );
+				
 				
 				
 				
@@ -668,7 +712,7 @@ public class PrisonUtilsMineBombs
 						{
 							int lenght = 1 + (bomb.getRadius() * 2);
 							messageShape = String.format( 
-									"      &3Shape: &7%s   &3Size: &7%d &3x &7%d &3x &7%d   &3Based on Radius: &7%d.5", 
+									"  &3Shape: &7%s   &3Size: &7%d &3x &7%d &3x &7%d   &3Based on Radius: &7%d.5", 
 									bomb.getExplosionShape(), 
 									lenght, lenght, lenght,
 									bomb.getRadius() );
@@ -681,7 +725,7 @@ public class PrisonUtilsMineBombs
 					case ring_z:
 					{
 						messageShape = String.format( 
-								"      &3Shape: &7%s   &3Radius: &7%d.5   &3RadiusInner: &7%d.5", 
+								"  &3Shape: &7%s   &3Radius: &7%d.5   &3RadiusInner: &7%d.5", 
 								bomb.getExplosionShape(), bomb.getRadius(), bomb.getRadiusInner() );
 						break;
 					}
@@ -692,13 +736,13 @@ public class PrisonUtilsMineBombs
 					case disk_z:
 					{
 						messageShape = String.format( 
-								"      &3Shape: &7%s   &3Radius: &7%d.5", 
+								"  &3Shape: &7%s   &3Radius: &7%d.5", 
 								bomb.getExplosionShape(), bomb.getRadius() );
 						break;
 					}
 					default:
 					{
-						messageShape = "      &4(no shape defined)";
+						messageShape = "  &4(no shape defined)";
 					}
 				}
 				if ( messageShape != null && !messageShape.isEmpty() ) {
@@ -728,6 +772,36 @@ public class PrisonUtilsMineBombs
 				
 				
 				messages.add( "      " + bomb.getDescription() );
+				
+				
+				if ( bomb.getAllowedMines().size() > 0 ) {
+					StringBuilder sb = new StringBuilder();
+					for (String mineName : bomb.getAllowedMines() ) {
+						if ( sb.length() > 0 ) {
+							sb.append( ", " );
+						}
+						sb.append( mineName );
+					}
+
+					String msgMines = String.format( 
+							"      &3Allowed on in mines: &7%s",
+							sb.toString() );
+					messages.add( msgMines );
+				}
+				if ( bomb.getPreventedMines().size() > 0 ) {
+					StringBuilder sb = new StringBuilder();
+					for (String mineName : bomb.getPreventedMines() ) {
+						if ( sb.length() > 0 ) {
+							sb.append( ", " );
+						}
+						sb.append( mineName );
+					}
+					
+					String msgMines = String.format( 
+							"      &3Excluded from mines: &7%s",
+							sb.toString() );
+					messages.add( msgMines );
+				}
 				
 				
 				if ( optAll ) {
@@ -762,6 +836,11 @@ public class PrisonUtilsMineBombs
 				
 //				Output.get().log( message, LogLevel.PLAIN );
 			}
+			
+			messages.add( f1 );
+			messages.add( f2 );
+			messages.add( f3 );
+			messages.add( f4 );
 			
 			sender.sendMessage( messages.toArray( new String[0] ) );
 		}
@@ -940,23 +1019,6 @@ public class PrisonUtilsMineBombs
 					
 					sender.sendMessage( String.format( message, bombName ) );
 				}
-				
-//				if ( "list".equalsIgnoreCase( bombName ) ) {
-//					
-//					Set<String> keys = mBombs.getConfigData().getBombs().keySet();
-//					for ( String key : keys ) {
-//						
-//						MineBombData bomb = mBombs.getConfigData().getBombs().get( key );
-//						
-//						String message = String.format( 
-//								"%-12s %-7s Radius= %s (%s)\n  %s", 
-//								bomb.getName(), bomb.getExplosionShape(), Integer.toString(bomb.getRadius()),
-//								bomb.getItemType(), bomb.getDescription() );
-//						
-//						sender.sendMessage( message );
-//					}
-//				}
-				
 				
 			}
 		}
