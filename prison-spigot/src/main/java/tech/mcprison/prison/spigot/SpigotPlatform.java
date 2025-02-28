@@ -1611,9 +1611,12 @@ public class SpigotPlatform
     		if ( rankPlayer != null && rankPlayerFactory.getRank( rankPlayer, "default" ) != null ) {
     			PlayerRank pRank = rankPlayerFactory.getRank( rankPlayer, "default" );
     			
+    			// Reset the miscText field:
+    			sender.setMiscText( null );
+    			
     			Rank rank = pRank.getRank();
     			
-    			if ( rank != null ) {
+    			while ( rank != null && results == null ) {
     				
     				// First check to see if there are any mines linked to a rank:
     				if ( rank.getMines() != null && rank.getMines().size() > 0 ) {
@@ -1639,8 +1642,24 @@ public class SpigotPlatform
     					results = mm.getMine( rank.getName() );
     				}
     				
+    				if ( results == null ) {
+    					// The current rank did not have any mines tied to the rank, nor was there
+    					// a mine with the name of the current rank.
+    					// Therefore, try the prior rank:
+    					rank = rank.getRankPrior();
+    				}
+    				
     			}
-    			
+
+    			if ( rank != null && rank.compareTo( pRank.getRank() ) != 0 ) {
+    				String msg = String.format( 
+    						"&3No mines are connected to current rank %s&3. Mine %s&3 is the next "
+    						+ "highest rank that has a mine.",
+    						pRank.getRank().getTag(),
+    						rank.getTag()
+    						);
+    				sender.setMiscText( msg );
+    			}
     		}
 			
 		}

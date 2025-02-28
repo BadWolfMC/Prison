@@ -17,6 +17,13 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-28
 
 
+* **Players:  CommandSender:  Added a new transient field miscText that can now be used to return a message to the caller.**
+For the command '/mines tp' if a player tries to tp to their current rank's mines, and if that rank does not have any mines connected to it, it will now step back through all prior ranks until it finds a mine to TP the player to.
+This returns a message that can be used, indicating the current rank, but indicates the next highest rank that had a mine.
+This message is not yet externalized.  Including a TP message indicating where they player has been TP'd to.
+
+
+
 * **CommandHandler: Expand the tracking of command stats to track the usage of aliases.**
 The command '/prison support cmdStats' has been updated to include alias usage counts.
 Usage of aliases would not be tracked at all, even the primary command.

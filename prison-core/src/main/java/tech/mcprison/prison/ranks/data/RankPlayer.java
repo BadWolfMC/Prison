@@ -146,6 +146,8 @@ public class RankPlayer
 	private List<String> sellallMultipliers;
 
 	
+	private transient String miscText;
+	
 
     public RankPlayer() {
     	super();
@@ -2358,7 +2360,21 @@ public class RankPlayer
 	}
 
 	
-
+	/**
+	 * This miscText is not used for any specific purpose other than to hold a String 
+	 * value.  It can be used to return a message from a function, but it should always
+	 * be cleared when done using it.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getMiscText() {
+		return miscText;
+	}
+	@Override
+	public void setMiscText( String text )  {
+		miscText = text;
+	}
 
 //	public long getRankScoreCooldown() {
 //		return rankScoreCooldown;

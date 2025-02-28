@@ -45,6 +45,8 @@ import tech.mcprison.prison.util.Text;
  */
 public class SpigotCommandSender 
 		implements CommandSender {
+	
+	private transient String miscText;
 
     private org.bukkit.command.CommandSender bukkitSender;
 
@@ -327,6 +329,23 @@ public class SpigotCommandSender
 					.getPlayer( (Player) this );
 		}
 		return rankPlayer;
+	}
+	
+	
+	/**
+	 * This miscText is not used for any specific purpose other than to hold a String 
+	 * value.  It can be used to return a message from a function, but it should always
+	 * be cleared when done using it.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getMiscText() {
+		return miscText;
+	}
+	@Override
+	public void setMiscText( String text )  {
+		miscText = text;
 	}
 
 }

@@ -120,5 +120,15 @@ public interface CommandSender
 	
 	public RankPlayer getRankPlayer();
 
+	
+	/**
+	 * This miscText is not used for any specific purpose other than to hold a String 
+	 * value.  It can be used to return a message from a function, but it should always
+	 * be cleared when done using it.
+	 * 
+	 * @return
+	 */
+	public String getMiscText();
+	public void setMiscText( String text );
 
 }
