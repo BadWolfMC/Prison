@@ -17,6 +17,12 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-02-28
 
 
+* **CommandHandler: Expand the tracking of command stats to track the usage of aliases.**
+The command '/prison support cmdStats' has been updated to include alias usage counts.
+Usage of aliases would not be tracked at all, even the primary command.
+
+
+
 * **AutoManager: PEExplosionEvent - remove a debug statement that was showing up in the console when not in debug mode.**
 
 

@@ -1347,11 +1347,12 @@ public class PrisonCommand
     	
     	results.add( "Prison Command Stats:" );
     	results.add( 
-    			Output.stringFormat( "    &a&n%-40s&r  &a&n%7s&r  &a&n%-11s&r", 
-    					" Commands     ", " Usage ", "  Avg ms  ") );
+    			Output.stringFormat( "    &a&n%-40s&r  &a&n%7s&r  &a&n%7s&r  &a&n%-11s&r", 
+    					" Commands     ", " Usage "," Alias ", "  Avg ms  ") );
     	
     	int count = 0;
     	int totals = 0;
+    	int totalsAlias = 0;
     	double totalDuration = 0d;
     	for (RegisteredCommand cmd : allCmds) {
 			
@@ -1359,13 +1360,15 @@ public class PrisonCommand
     			
     			double duration = cmd.getUsageRunTimeNanos() / (double) cmd.getUsageCount() / 1000000.0d;
     			
-    			results.add( Output.stringFormat( "    &2%-40s  &2%7s  &2%11s",
+    			results.add( Output.stringFormat( "    &2%-40s  &2%7s  &2%7s  &2%11s",
     					cmd.getCompleteLabel(), 
     					iFmt.format( cmd.getUsageCount() ),
+    					iFmt.format( cmd.getUsageCountAlias() ),
     					dFmt.format( duration )
     					) );
     			count++;
     			totals += cmd.getUsageCount();
+    			totalsAlias += cmd.getUsageCountAlias();
     			totalDuration += cmd.getUsageRunTimeNanos();
     		}
 		}
@@ -1373,6 +1376,7 @@ public class PrisonCommand
     	results.add( Output.stringFormat("  &3Total Registered Prison Commands: &7%9s", iFmt.format( allCmds.size() )) );
     	results.add( Output.stringFormat("  &3Total Prison Commands Listed:     &7%9s", iFmt.format( count )) );
     	results.add( Output.stringFormat("  &3Total Prison Command Usage:       &7%9s", iFmt.format( totals )) );
+    	results.add( Output.stringFormat("  &3Total Prison Command Alias Usage: &7%9s", iFmt.format( totalsAlias )) );
     	
     	double avgDuration = totalDuration / (double) count / 1000000.0d;
     	results.add( Output.stringFormat("  &3Average Command Duration ms:      &7%9s", dFmt.format( avgDuration )) );

@@ -48,6 +48,7 @@ import tech.mcprison.prison.output.ChatDisplay;
 import tech.mcprison.prison.output.LogLevel;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.output.RowComponent;
+import tech.mcprison.prison.output.Output.DebugTarget;
 import tech.mcprison.prison.util.ChatColor;
 
 public class CommandHandler {
@@ -971,6 +972,23 @@ public class CommandHandler {
         if (rootCommand.isOnlyPlayers() && !(sender instanceof Player)) {
             Prison.get().getLocaleManager().getLocalizable("cantAsConsole")
                 .sendTo(sender, LogLevel.ERROR);
+            
+            boolean debug = Output.get().isActiveTarget( DebugTarget.commandHandler );
+            if ( debug ) {
+    			String argz = "";
+    			for (String arg : args) {
+    				argz += arg + " ";
+    			}
+    			
+    			String msg = String.format( 
+    					"CommandHandler.onCommand: Sender %s. Command is marked with 'onlyPlayers'. "
+    							+ "Cannot run. : [%s]",
+    					sender.getName(), 
+    					(label + " " + argz).trim()
+    					);
+    			Output.get().logInfo( msg );
+    		}
+            
             return true;
         }
         

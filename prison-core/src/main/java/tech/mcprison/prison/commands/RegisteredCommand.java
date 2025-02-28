@@ -44,6 +44,7 @@ public class RegisteredCommand
     private boolean alias = false;
     
     private int usageCount;
+    private int usageCountAlias;
     private long usageRunTimeNanos;
     
     private String junitTest = null;
@@ -84,6 +85,7 @@ public class RegisteredCommand
         this.registeredAliases = new ArrayList<>();
         
         this.usageCount = 0;
+        this.usageCountAlias = 0;
         this.usageRunTimeNanos = 0;
     }
 
@@ -287,6 +289,12 @@ public class RegisteredCommand
             	
             	// Record that the command has been "ran", which does not mean it was successful:
             	incrementUsageCount();
+            	
+            	if ( isAlias() && getParentOfAlias() != null ) {
+//            		getParentOfAlias().incrementUsageCount();
+            		getParentOfAlias().incrementUsageCountAlias();
+            		
+            	}
             	nanosStart = System.nanoTime();
             	
                 method.invoke(getMethodInstance(), resultArgs.toArray());
@@ -655,6 +663,16 @@ public class RegisteredCommand
     }
 	public void setUsageCount(int usageCount) {
 		this.usageCount = usageCount;
+	}
+	
+	public void incrementUsageCountAlias() {
+		usageCountAlias++;
+	}
+	public int getUsageCountAlias() {
+		return usageCountAlias;
+	}
+	public void setUsageCountAlilas(int usageCountAlias) {
+		this.usageCountAlias = usageCountAlias;
 	}
 
 	public long getUsageRunTimeNanos() {
