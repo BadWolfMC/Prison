@@ -3331,12 +3331,13 @@ public class MinesCommands
 
     
 
-    @Command(identifier = "mines tp", description = "TP to the mine. Will default to the mine's " +
+    @Command(identifier = "mines tp", onlyPlayers = false,
+    		description = "TP to the mine. Will default to the mine's " +
     		"spawn location if set, but can specify the target [spawn, mine]. Instead of a mine " +
     		"name, 'list' will show all mines you have access to. OPs and console can " +
     		"TP other online players to a specified mine. Access for non-OPs can be setup through " +
     		"'/mines set tpAccessByRank help` is preferred over permissions.", 
-    		aliases = "mtp",
+    		aliases = "mtp", 
     		altPermissions = {"access-by-rank", "mines.tp", "mines.tp.[mineName]"})
     public void mineTp(CommandSender sender,
         @Arg(name = "mineName", def="",
@@ -3404,8 +3405,10 @@ public class MinesCommands
     	PrisonMines pMines = PrisonMines.getInstance();
     	Mine m = null;
     	
+    	// Reset the sender's miscText field:
+    	sender.setMiscText( null );
     	
-    	if ( mineName == null || mineName.trim().isEmpty() ) {
+     	if ( mineName == null || mineName.trim().isEmpty() ) {
     		// Need to find a "correct" mine to TP to.
     		
     		m = (Mine) Prison.get().getPlatform().getPlayerDefaultMine( sender );
@@ -3437,6 +3440,8 @@ public class MinesCommands
     	
     	Player player = sender.getPlatformPlayer();
     	
+    	
+    	// This is not working... it should return an online player...
     	Player playerAlt = getOnlinePlayer( playerName );
     	
     	
@@ -3521,6 +3526,14 @@ public class MinesCommands
         
     	if ( sender.isPlayer() ) {
     		teleportPlayer( (Player) sender, m, target );
+    		
+    		String msg = String.format( 
+    				"&3Teleported to mine %s.  %s",
+    				m.getTag(),
+    				( sender.getMiscText() == null ? "" : sender.getMiscText() )
+    				);
+    		sender.sendMessage( msg );
+    		
 //    		m.teleportPlayerOut( (Player) sender, target );
     	} else {
     		teleportFailedMsg( sender );
@@ -5888,6 +5901,8 @@ private ChatDisplay minesCommandList( Mine m )
 	}
 	
 	
+    @Command(identifier = "mines dump", permissions = "mines.block", onlyPlayers = false, 
+			description = "Temp command for testing: Dumps a mine as a json object.")
 	public void minesDumpCommand(CommandSender sender,
 			@Arg(name = "mineName", description = "The name of the mine to dump")
 					String mineName ) {
