@@ -14,7 +14,10 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-02-25
+# 3.3.0-alpha.19f 2025-02-28
+
+
+* **AutoManager: PEExplosionEvent - remove a debug statement that was showing up in the console when not in debug mode.**
 
 
 * **InventoryFullEvent: Start to setup a prison based event that will fire when prison detects that the inventory object is full.**

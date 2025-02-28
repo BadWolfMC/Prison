@@ -507,8 +507,8 @@ public class AutoManagerPrisonEnchants
 		List<Block> vBlocks = removeAllInvalidBlocks( e.getPlayer(), e.getBlocks(), bbPriority, true );
 		int blocksAfter = vBlocks.size();
 
-		Output.get().logInfo( "&6 #### PEExplosionEvent:  &7removeAllInvalidBlocks:&3  before: %d  after: %d",
-				blocksBefore, blocksAfter );
+//		Output.get().logInfo( "&6 #### PEExplosionEvent:  &7removeAllInvalidBlocks:&3  before: %d  after: %d",
+//				blocksBefore, blocksAfter );
 		
 		
 		if ( vBlocks.size() == 0 ) {
