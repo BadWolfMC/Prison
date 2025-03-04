@@ -14,7 +14,10 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-02-28
+# 3.3.0-alpha.19f 2025-03-04
+
+
+* **MineBombs: Added a cooldown exception so cooldowns can now be handled and reported correctly.  Before the "bomb not found" message would be used, which was confusing.**
 
 
 * **MineBombs:  Improvements to the command '/prison utils bomb list' command to better format the information and include some missing details.**

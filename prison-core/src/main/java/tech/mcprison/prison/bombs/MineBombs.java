@@ -268,6 +268,7 @@ public class MineBombs
 	 * @return
 	 */
 	public MineBombData findBombByName( Player player, String bombName )
+		throws MineBombCooldownException
 	{
 		MineBombData results = null;
 		
@@ -321,7 +322,11 @@ public class MineBombs
 				
 				dbug.append( "&3 CoolDownIsInEffect: " )
 					.append( cooldownTicks ).append( " ticks remaining" ).append(" &aRejected! &3 " );
-				results = null;
+				
+				MineBombCooldownException cooldownException = new MineBombCooldownException( cooldownTicks );
+				
+				throw cooldownException;
+				
 			}
 		}
 		

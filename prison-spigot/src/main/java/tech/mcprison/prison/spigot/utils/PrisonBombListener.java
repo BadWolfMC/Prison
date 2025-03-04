@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import tech.mcprison.prison.Prison;
+import tech.mcprison.prison.bombs.MineBombCooldownException;
 import tech.mcprison.prison.bombs.MineBombData;
 import tech.mcprison.prison.bombs.MineBombs;
 import tech.mcprison.prison.mines.data.Mine;
@@ -83,7 +84,20 @@ public class PrisonBombListener
         		Player player = event.getPlayer();
         		SpigotPlayer sPlayer = new SpigotPlayer( player );
         		
-        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
+        		MineBombData mineBomb = null;
+        		
+        		try {
+					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+				} 
+        		catch (MineBombCooldownException e) {
+					String msg = e.getLocalizedMessage();
+					
+					sPlayer.sendMessage(msg);
+					
+					return;
+				}
+        		
+//        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
         		
         		
         		PrisonNBTUtil.setNBTString(iStack, 
@@ -148,7 +162,21 @@ public class PrisonBombListener
         		SpigotPlayer sPlayer = new SpigotPlayer( player );
         		
         		// If the player is on a mine bomb cooldown, then mineBomb will be null:
-        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
+        		
+        		final MineBombData mineBomb;
+        		
+        		try {
+					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+				} 
+        		catch (MineBombCooldownException e) {
+					String msg = e.getLocalizedMessage();
+					
+					sPlayer.sendMessage(msg);
+					
+					return;
+				}
+        		
+//        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
         		
         		if ( mineBomb != null ) {
         			
@@ -338,7 +366,18 @@ public class PrisonBombListener
         		SpigotPlayer sPlayer = new SpigotPlayer( player );
         		
         		// If the player is on a mine bomb cooldown, then mineBomb will be null:
-        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+        		MineBombData mineBomb = null;
+        		
+        		try {
+					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+				} 
+        		catch (MineBombCooldownException e) {
+					String msg = e.getLocalizedMessage();
+					
+					sPlayer.sendMessage(msg);
+					
+					return;
+				}
         		
         		if ( mineBomb != null ) {
         			

@@ -22,6 +22,7 @@ import com.cryptomorin.xseries.XSound;
 import tech.mcprison.prison.Prison;
 import tech.mcprison.prison.autofeatures.AutoFeaturesFileConfig.AutoFeatures;
 import tech.mcprison.prison.autofeatures.AutoFeaturesWrapper;
+import tech.mcprison.prison.bombs.MineBombCooldownException;
 import tech.mcprison.prison.bombs.MineBombData;
 import tech.mcprison.prison.bombs.MineBombDetonateTask;
 import tech.mcprison.prison.bombs.MineBombEffectsData;
@@ -907,9 +908,22 @@ public class PrisonUtilsMineBombs
 				
 				count = Integer.parseInt( quantity );
 				
-				MineBombs mBombs = MineBombs.getInstance();
+//				MineBombs mBombs = MineBombs.getInstance();
 				
-				MineBombData bomb = mBombs.findBombByName( player, bombName);
+        		MineBombData bomb = null;
+        		
+        		try {
+					bomb = MineBombs.getInstance().findBombByName( player, bombName);
+				} 
+        		catch (MineBombCooldownException e) {
+					String msg = e.getLocalizedMessage();
+					
+					player.sendMessage(msg);
+					
+					return;
+				}
+				
+//				MineBombData bomb = mBombs.findBombByName( player, bombName);
 				
 //				// Remove color codes from bomb's name for matching:
 //				bombName = Text.stripColor( bombName );
@@ -1141,7 +1155,17 @@ public class PrisonUtilsMineBombs
 			
 			SpigotPlayer sPlayer = new SpigotPlayer( player );
 			
-			bomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
+    		try {
+				bomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+			} 
+    		catch (MineBombCooldownException e) {
+				String msg = e.getLocalizedMessage();
+				
+				sPlayer.sendMessage(msg);
+
+    		}
+    		
+//			bomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
 //			bomb = getBombItem( bombName );
 		}
 		
