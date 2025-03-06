@@ -886,8 +886,13 @@ public class PrisonUtilsMineBombs
 				return;
 			}
 			
+			
+			// Get a SpigotPlayer object, which will be returned if the player has 
+			// access to those perms too. If ranks are disabled, then allow it to check
+			// bukkit's offline players.
+			boolean useOfflinePlayers = true;
 			SpigotPlayer player = checkPlayerPerms( sender, playerName, 
-					"prison.utils.bomb", "prison.utils.bomb.others" );
+					"prison.utils.bomb", "prison.utils.bomb.others", useOfflinePlayers );
 			
 			if ( player != null ) {
 				
@@ -913,7 +918,8 @@ public class PrisonUtilsMineBombs
         		MineBombData bomb = null;
         		
         		try {
-					bomb = MineBombs.getInstance().findBombByName( player, bombName);
+        			// Give command. Do not enable cooldowns:
+					bomb = MineBombs.getInstance().findBombByName( player, bombName, false );
 				} 
         		catch (MineBombCooldownException e) {
 					String msg = e.getLocalizedMessage();
@@ -1156,7 +1162,9 @@ public class PrisonUtilsMineBombs
 			SpigotPlayer sPlayer = new SpigotPlayer( player );
 			
     		try {
-				bomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+    			// Checking to see if an item in the player's inventory is a 
+    			// minebomb or not.  So disable cooldown for this:
+				bomb = MineBombs.getInstance().findBombByName( sPlayer, bombName, false);
 			} 
     		catch (MineBombCooldownException e) {
 				String msg = e.getLocalizedMessage();

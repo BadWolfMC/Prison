@@ -87,6 +87,7 @@ public class PrisonBombListener
         		MineBombData mineBomb = null;
         		
         		try {
+        			// Placing minebombs: Use cooldowns:
 					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
 				} 
         		catch (MineBombCooldownException e) {
@@ -166,6 +167,7 @@ public class PrisonBombListener
         		final MineBombData mineBomb;
         		
         		try {
+        			// Throw minebombs: Use cooldowns:
 					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
 				} 
         		catch (MineBombCooldownException e) {
@@ -369,7 +371,8 @@ public class PrisonBombListener
         		MineBombData mineBomb = null;
         		
         		try {
-					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName);
+        			// Player place event.  Enable cooldown to limit placing too many bombs: 
+					mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
 				} 
         		catch (MineBombCooldownException e) {
 					String msg = e.getLocalizedMessage();

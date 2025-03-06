@@ -252,6 +252,11 @@ public class MineBombs
 //		return bombOriginal.clone();
 //	}
 	
+	public MineBombData findBombByName( Player player, String bombName )
+			throws MineBombCooldownException
+	{
+		return findBombByName( player, bombName, true );	
+	}
 	
 	/**
 	 * <p>This finds a bomb based upon a bombName which may include formatting.
@@ -264,10 +269,13 @@ public class MineBombs
 	 * original source.
 	 * </p>
 	 * 
+	 * @param player
 	 * @param bombName
+	 * @param enableCooldown If true, then will force a cooldown on finding minebombs
 	 * @return
 	 */
-	public MineBombData findBombByName( Player player, String bombName )
+	public MineBombData findBombByName( Player player, String bombName,
+				boolean enableCooldown )
 		throws MineBombCooldownException
 	{
 		MineBombData results = null;
@@ -300,7 +308,7 @@ public class MineBombs
 			}
 		}
 		
-		if ( results != null ) {
+		if ( results != null && enableCooldown ) {
 
 			int ticks = results.getCooldownTicks();
 			int cooldownTicks = MineBombCooldownTask.checkPlayerCooldown( player );
