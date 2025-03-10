@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-03-06
 
 
+* **MineBombs: Players: Ranks disabled: Made some changes to how players are being loaded in the 'bomb give' command to allow it to work when ranks have been disabled.**
+
+
 * **MineBombs: Eliminated cooldowns from the 'utils bomb give' command and from prison checking to see if an items is a mine bomb to determine if the event should be handled.**
 This should get rid of the bug where using bomb give too frequently would result in error messages and lost bombs (if a player is paying for a bomb).
 

@@ -71,6 +71,10 @@ public abstract class PrisonUtils
 	 */
 	abstract protected Boolean initialize();
 
+	protected SpigotPlayer checkPlayerPerms( CommandSender sender, String playerName, 
+			String permsSelf, String permsOthers ) {
+		return checkPlayerPerms(sender, playerName, permsSelf, permsOthers, false );
+	}
 	
 	/**
 	 * <p>This function checks the perms of the player.  If the CommandSender has no 
@@ -91,11 +95,12 @@ public abstract class PrisonUtils
 	 * @return
 	 */
 	protected SpigotPlayer checkPlayerPerms( CommandSender sender, String playerName, 
-					String permsSelf, String permsOthers ) {
+					String permsSelf, String permsOthers, 
+					boolean useOfflinePlayers ) {
 		
 		boolean isConsole = !(sender instanceof org.bukkit.entity.Player);
 		
-    	SpigotPlayer player = getSpigotPlayer( playerName, false );
+    	SpigotPlayer player = getSpigotPlayer( playerName, useOfflinePlayers );
     	
     	// Player's name was not found then it's either being ran from console, or on self.
     	if ( player == null ) {
