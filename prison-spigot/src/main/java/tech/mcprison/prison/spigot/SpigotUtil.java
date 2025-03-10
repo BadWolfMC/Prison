@@ -52,6 +52,7 @@ import tech.mcprison.prison.spigot.block.SpigotItemStack;
 import tech.mcprison.prison.spigot.compat.BlockTestStats;
 import tech.mcprison.prison.spigot.compat.SpigotCompatibility;
 import tech.mcprison.prison.spigot.game.SpigotWorld;
+import tech.mcprison.prison.spigot.integrations.IntegrationBackpackAPI;
 import tech.mcprison.prison.spigot.integrations.IntegrationMinepacksPlugin;
 import tech.mcprison.prison.util.Location;
 import tech.mcprison.prison.util.Text;
@@ -298,6 +299,12 @@ public class SpigotUtil {
 			}
 			
 			
+			// Insert overflow in to the backpack API:
+			if ( overflow.size() > 0 && IntegrationBackpackAPI.getInstance().isEnabled() ) {
+				overflow = IntegrationBackpackAPI.getInstance().addItemsBukkit( player, overflow );						
+			}
+			
+			
 			// Cannot stick it anywhere else, so return the extras:
 			for ( Integer key : overflow.keySet() ) {
 				ItemStack iStack = overflow.get(key);
@@ -419,7 +426,13 @@ public class SpigotUtil {
 		if ( IntegrationMinepacksPlugin.getInstance().isEnabled() ) {
 			removed += IntegrationMinepacksPlugin.getInstance().itemStackRemoveAll(player, xMat);
 		}
-	
+		
+		
+		// Then remove from the backpack API:
+		if ( IntegrationBackpackAPI.getInstance().isEnabled() ) {
+			removed += IntegrationBackpackAPI.getInstance().itemStackRemoveAll(player, xMat);
+		}
+		
 		return removed;
 	}
 

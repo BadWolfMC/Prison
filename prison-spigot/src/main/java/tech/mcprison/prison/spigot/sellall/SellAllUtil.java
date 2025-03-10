@@ -41,6 +41,7 @@ import tech.mcprison.prison.spigot.game.SpigotCommandSender;
 import tech.mcprison.prison.spigot.game.SpigotPlayer;
 import tech.mcprison.prison.spigot.gui.sellall.SellAllAdminGUI;
 import tech.mcprison.prison.spigot.gui.sellall.SellAllPlayerGUI;
+import tech.mcprison.prison.spigot.integrations.IntegrationBackpackAPI;
 import tech.mcprison.prison.spigot.integrations.IntegrationMinepacksPlugin;
 import tech.mcprison.prison.spigot.inventory.SpigotPlayerInventory;
 import tech.mcprison.prison.util.Text;
@@ -1098,10 +1099,16 @@ public class SellAllUtil
 			soldData.addAll( bpUtil.sellInventoryItems( p, multiplier ) );
     	}
     	
+    	// Enable sellall for the Minepacks plugin:
 		if ( isSellAllMinesBackpacksPluginEnabled && IntegrationMinepacksPlugin.getInstance().isEnabled()  ) {
 			soldData.addAll( IntegrationMinepacksPlugin.getInstance().sellInventoryItems( p, multiplier ) );						
 		}
     	
+		// Enable sellall for the backpack API:
+		if ( isSellAllMinesBackpacksPluginEnabled && IntegrationBackpackAPI.getInstance().isEnabled()  ) {
+			soldData.addAll( IntegrationBackpackAPI.getInstance().sellInventoryItems( p, multiplier ) );						
+		}
+		
     	return soldData;
 	}
 

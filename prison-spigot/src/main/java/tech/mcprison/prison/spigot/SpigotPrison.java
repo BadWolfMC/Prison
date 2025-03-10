@@ -89,6 +89,7 @@ import tech.mcprison.prison.spigot.economies.SaneEconomy;
 import tech.mcprison.prison.spigot.economies.TheNewEconomy;
 import tech.mcprison.prison.spigot.economies.VaultEconomy;
 import tech.mcprison.prison.spigot.gui.ListenersPrisonManager;
+import tech.mcprison.prison.spigot.integrations.IntegrationBackpackAPI;
 import tech.mcprison.prison.spigot.integrations.IntegrationMinepacksPlugin;
 import tech.mcprison.prison.spigot.permissions.LuckPermissions;
 import tech.mcprison.prison.spigot.permissions.LuckPerms5;
@@ -992,6 +993,10 @@ public class SpigotPrison
         registerIntegration( IntegrationMinepacksPlugin.getInstance() );
         registerIntegration( BackpacksUtil.get() );
         
+        // Force the registration since IntegrationPackpackAPI is not based
+        // upon any other plugin:
+        registerIntegrationForce( IntegrationBackpackAPI.getInstance() );
+        
         
 //        registerIntegration(new WorldGuard6Integration());
 //        registerIntegration(new WorldGuard7Integration());
@@ -1033,12 +1038,37 @@ public class SpigotPrison
 		ph2.deferredInitialization();
 	}
     
+	/**
+	 * This is the normal way to register integrations that are based upon 
+	 * other loaded plugins.  They must be active, or they will not be 
+	 * registered.
+	 * 
+	 * @param integration
+	 */
     public void registerIntegration(Integration integration) {
 
     	boolean isRegistered = isIntegrationRegistered( integration );
     	String version = ( isRegistered ? Bukkit.getPluginManager()
     									.getPlugin( integration.getProviderName() )
     											.getDescription().getVersion() : null );
+    	
+    	PrisonAPI.getIntegrationManager().register(integration, isRegistered, version );
+    }
+    
+    /**
+     * This should only be used by Integrations that are not based upon another
+     * plugin, such as the IntegrationBackpackAPI, which any code in any plugin,
+     * can register dynamically as a backpackAPI listener.
+     * 
+     * This will always treat it as a successful registration, although that 
+     * does not mean it will be active.
+     * 
+     * @param integration
+     */
+    public void registerIntegrationForce(Integration integration) {
+    	
+    	boolean isRegistered = true;
+    	String version = "api";
     	
     	PrisonAPI.getIntegrationManager().register(integration, isRegistered, version );
     }

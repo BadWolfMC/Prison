@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import tech.mcprison.prison.spigot.SpigotPrison;
@@ -190,7 +191,7 @@ public class InventoryFullEvent
 		 */
 		public void sampleUsageRegisterListenerEvent() {
 			
-			SpigotPrison prison = SpigotPrison.getInstance();
+			Plugin prison = SpigotPrison.getInstance();  // Your plugin. Don't use prison.
 			PluginManager pm = Bukkit.getServer().getPluginManager();
 			
 			SampleInventoryFullListener sifListener = new SampleInventoryFullListener();

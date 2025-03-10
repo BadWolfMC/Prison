@@ -14,7 +14,13 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-03-06
+# 3.3.0-alpha.19f 2025-03-10
+
+
+* **BackpackEvent: New api using a backpack event to allow other plugins to hook in to the prison backpack processing which will behave as a new Backpack Integration.** 
+This will allow anyone to easily hook in to Prison's generic backpack behavior for auto pickup and autosell.
+This new event is tied to the new IntegrationBackpackAPI.  Basically, to perform a backpack operation on an unknown backpack source, the BackpackEvent collects a list of Inventory objects from the backpack, which allows prison to operate on the generic Inventory, and then it offers the use of a CallBack that will allow the backpack plugin to process the results of the actions against the inventories.
+
 
 
 * **MineBombs: Players: Ranks disabled: Made some changes to how players are being loaded in the 'bomb give' command to allow it to work when ranks have been disabled.**
