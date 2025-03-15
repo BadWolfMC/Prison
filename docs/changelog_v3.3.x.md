@@ -14,7 +14,10 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-03-12
+# 3.3.0-alpha.19f 2025-03-15
+
+
+* **MineBombs: Added the new cooldown message that is in the MineBombCooldownException to the core messages.**
 
 
 * **Sellall: Ran in to a situation where an ItemStack that was being processed did not have a bukkit ItemStack internally, so it was causing an NPE. **
