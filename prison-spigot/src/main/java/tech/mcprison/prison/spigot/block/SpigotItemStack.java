@@ -401,11 +401,14 @@ public class SpigotItemStack
 	
 	
 	private ItemMeta getMeta() {
-		ItemMeta meta;
-		if (!bukkitStack.hasItemMeta()) {
-			meta = Bukkit.getItemFactory().getItemMeta(bukkitStack.getType());
-		} else {
-			meta = bukkitStack.getItemMeta();
+		ItemMeta meta = null;
+			
+		if ( getBukkitStack() != null ) {
+			if (!getBukkitStack().hasItemMeta()) {
+				meta = Bukkit.getItemFactory().getItemMeta(getBukkitStack().getType());
+			} else {
+				meta = getBukkitStack().getItemMeta();
+			}
 		}
 		
 		return meta;

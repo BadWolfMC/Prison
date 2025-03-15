@@ -14,7 +14,12 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-03-10
+# 3.3.0-alpha.19f 2025-03-12
+
+
+* **Sellall: Ran in to a situation where an ItemStack that was being processed did not have a bukkit ItemStack internally, so it was causing an NPE. **
+This fixes the issue by checking to ensure the bukkit ItemStack exists first.
+
 
 
 * **BackpackEvent: New api using a backpack event to allow other plugins to hook in to the prison backpack processing which will behave as a new Backpack Integration.** 
