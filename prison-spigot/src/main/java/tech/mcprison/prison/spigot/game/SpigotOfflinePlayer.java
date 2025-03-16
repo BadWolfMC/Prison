@@ -141,6 +141,12 @@ public class SpigotOfflinePlayer
 //		return false;
 	}
 	
+	
+	@Override
+	public long getLastSeenDate() {
+		return offlinePlayer.getLastPlayed();
+	}
+	
 	/**
 	 * NOTE: A SpigotOfflinePlayer does not represent an online player with inventory.  
 	 *       This class is not "connected" to the underlying bukkit player

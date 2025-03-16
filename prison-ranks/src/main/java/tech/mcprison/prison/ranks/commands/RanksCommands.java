@@ -1641,7 +1641,11 @@ public class RanksCommands
     	DecimalFormat pFmt = Prison.get().getDecimalFormat("#,##0.0000");
 		SimpleDateFormat sdFmt = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
     	
+		
+		// need to see if the player is offline or online:
+		Player offlinePlayer = Prison.get().getPlatform().getOfflinePlayer( rankPlayer.getUUID() ).orElse( null );
     	
+		
     	//PlayerManager pm = PrisonRanks.getInstance().getPlayerManager();
 //    	RankPlayer rankPlayer = player.getRankPlayer();
 //		RankPlayer rankPlayer = pm.getPlayer(player.getUUID(), player.getName());
@@ -1655,6 +1659,18 @@ public class RanksCommands
 				rankPlayer.getName() );
 		msgs.add( msg1 );
 
+		
+		if ( offlinePlayer != null && cPlayer != null ) {
+			if ( cPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
+				cPlayer.setLastSeenDate( offlinePlayer.getLastSeenDate() );
+				cPlayer.setDirty( true );
+			}
+			
+			if ( rankPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
+				rankPlayer.setLastSeenDateTemp( offlinePlayer.getLastSeenDate() );
+				rankPlayer.setDirty( true );
+			}
+		}
 
 		
 		String lastSeen = cPlayer == null || cPlayer.getLastSeenDate() == 0 ? 
@@ -1769,12 +1785,12 @@ public class RanksCommands
 
 			}
 			
-			boolean isOp = rankPlayer.isOp();
-			boolean isPlayer = rankPlayer.isPlayer();
-			boolean isOnline = rankPlayer.isOnline();
+			boolean isOp = offlinePlayer != null ? offlinePlayer.isOp() : rankPlayer.isOp();
+			boolean isPlayer = offlinePlayer != null ? offlinePlayer.isPlayer() : rankPlayer.isPlayer();
+			boolean isOnline = offlinePlayer != null ? offlinePlayer.isOnline() : rankPlayer.isOnline();
 			
 			boolean isPrisonPlayer = (rankPlayer instanceof Player);
-			boolean isPrisonOfflineMcPlayer = (rankPlayer instanceof OfflineMcPlayer);
+			boolean isPrisonOfflineMcPlayer = offlinePlayer != null ? true : (rankPlayer instanceof OfflineMcPlayer);
 
 			if ( !isOnline ) {
 				String msgOffline = ranksPlayerPermsOfflineMsg();
@@ -2649,11 +2665,14 @@ public class RanksCommands
 
     
 	/**
-	 * This gets the RankPlayer for the given UUID or playerName.  The 'sender' generally is the 
+	 * <p>This gets the RankPlayer for the given UUID or playerName.  The 'sender' generally is the 
 	 * console, or an admin that is trying to run the command for a player.
 	 * So although the sender has a 'getRankPlayer()' function, it may be for the wrong player.
+	 * </p>
 	 * 
-
+	 * <p>If both the uuid and playerName are either null or empty, then if the sender
+	 * is a player, then get the RankPlayer from the sender.
+	 * </p>
 	 * 
 	 * @param sender The one who should get an messages, but is not the one for RankPlayer.
 	 * @param playerUuid
@@ -2661,6 +2680,13 @@ public class RanksCommands
 	 * @return
 	 */
 	public RankPlayer getRankPlayer( CommandSender sender, UUID playerUuid, String playerName ) {
+		
+		// If player name and uuid are both empty or null, and if sender is a player, 
+		// then get the RankPlayer from the sender:
+		if ( (playerName == null || playerName.trim().length() == 0) && 
+				playerUuid == null && sender.isPlayer() ) {
+			return sender.getRankPlayer();
+		}
 		
 		RankPlayer player = PrisonRanks.getInstance().getPlayerManager().getPlayer(playerUuid, playerName);
 

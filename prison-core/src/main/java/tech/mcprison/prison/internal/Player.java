@@ -178,6 +178,14 @@ public interface Player
 	
 	public void incrementMinecraftStatsDropCount( Player player, String blockName, int quantity);
 
+    /**
+     * Returns the bukkit's last seen date as a long.
+     * 
+     * @return
+     */
+	public long getLastSeenDate();
+    
+
 //	public RankPlayer getRankPlayer();
 	
 }

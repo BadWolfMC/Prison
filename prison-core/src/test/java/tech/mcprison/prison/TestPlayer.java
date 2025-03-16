@@ -304,4 +304,9 @@ public class TestPlayer
 	@Override
 	public void setMiscText( String text )  {
 	}
+
+	@Override
+	public long getLastSeenDate() {
+		return 0;
+	}
 }

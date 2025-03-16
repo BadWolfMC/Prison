@@ -345,11 +345,13 @@ public class SpigotPlayer
     public Inventory getInventory() {
         return getSpigotPlayerInventory();
     }
+    
     public SpigotPlayerInventory getSpigotPlayerInventory() {
     	return new SpigotPlayerInventory(getWrapper().getInventory());
     }
 
-    @Override public void updateInventory() {
+    @Override 
+    public void updateInventory() {
         bukkitPlayer.updateInventory();
     }
 
@@ -362,6 +364,12 @@ public class SpigotPlayer
 	public boolean isPlayer() {
 		return true;
 	}
+	
+
+    @Override
+    public long getLastSeenDate() {
+    	return bukkitPlayer.getLastPlayed();
+    }
 
 //    @Override 
 //    public boolean isOp() {
@@ -441,7 +449,7 @@ public class SpigotPlayer
     	
     	return sb.toString();
     }
-
+    
 	
 //    /**
 //     * This class is an adaptation of the NmsHelper class in the Rosetta library by Max Roncace. The

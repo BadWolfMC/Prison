@@ -348,6 +348,17 @@ public class RankPlayer
 	public void setLastSeenDateTemp(long lastSeenDate) {
 		this.lastSeenDate = lastSeenDate;
 	}
+    /**
+     * Returns the bukkit's last seen date as a long.
+     * 
+     * Returns the save value as getLastSeenDateTemp().
+     * @return
+     */
+	public long getLastSeenDate() {
+		return lastSeenDate;
+	}
+    
+	
 	
 	public void updateTotalLastValues( PlayerCachePlayerData cacheData ) {
 		updateTotalLastValues( cacheData, true );
