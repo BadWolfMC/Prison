@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-03-16
 
 
+* **Placeholders: added a comment to better explain the hex colors.**
+
+
 * **Ranks: Fixed a few issues with '/ranks player' be issued by the player.**
 Added last seen date to the player objects.
 
