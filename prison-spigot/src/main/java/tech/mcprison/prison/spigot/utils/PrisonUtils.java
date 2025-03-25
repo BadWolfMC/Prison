@@ -5,9 +5,10 @@ import org.bukkit.Bukkit;
 import tech.mcprison.prison.Prison;
 import tech.mcprison.prison.internal.CommandSender;
 import tech.mcprison.prison.internal.Player;
+import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.ranks.data.RankPlayer;
-import tech.mcprison.prison.spigot.game.SpigotOfflinePlayer;
 import tech.mcprison.prison.spigot.game.SpigotPlayer;
+import tech.mcprison.prison.spigot.game.SpigotPlayerException;
 
 public abstract class PrisonUtils
 		implements PrisonUtilsInterface {
@@ -71,10 +72,10 @@ public abstract class PrisonUtils
 	 */
 	abstract protected Boolean initialize();
 
-	protected SpigotPlayer checkPlayerPerms( CommandSender sender, String playerName, 
-			String permsSelf, String permsOthers ) {
-		return checkPlayerPerms(sender, playerName, permsSelf, permsOthers, false );
-	}
+//	protected SpigotPlayer checkPlayerPerms( CommandSender sender, String playerName, 
+//			String permsSelf, String permsOthers ) {
+//		return checkPlayerPerms(sender, playerName, permsSelf, permsOthers, false );
+//	}
 	
 	/**
 	 * <p>This function checks the perms of the player.  If the CommandSender has no 
@@ -95,12 +96,11 @@ public abstract class PrisonUtils
 	 * @return
 	 */
 	protected SpigotPlayer checkPlayerPerms( CommandSender sender, String playerName, 
-					String permsSelf, String permsOthers, 
-					boolean useOfflinePlayers ) {
+					String permsSelf, String permsOthers ) {
 		
 		boolean isConsole = !(sender instanceof org.bukkit.entity.Player);
 		
-    	SpigotPlayer player = getSpigotPlayer( playerName, useOfflinePlayers );
+    	SpigotPlayer player = getSpigotPlayer( playerName );
     	
     	// Player's name was not found then it's either being ran from console, or on self.
     	if ( player == null ) {
@@ -155,31 +155,77 @@ public abstract class PrisonUtils
      * ensure a player is always returned, if its a valid player.
      * </p>
      * 
-     * @param sender
-     * @param playerName is optional, if not supplied, then sender will be used
+     * @param playerName 
      * @return Player if found, or null.
      */
-	protected SpigotPlayer getSpigotPlayer( String playerName, boolean useOfflinePlayer ) {
+	protected SpigotPlayer getSpigotPlayer( String playerName ) {
 		SpigotPlayer result = null;
 		
 		RankPlayer rPlayer = Prison.get().getPlatform().getRankPlayer( null, playerName );
 		
-		if ( rPlayer != null ) {
-			Player player = Prison.get().getPlatform().getPlayer( rPlayer.getUUID() ).orElse(null);
+//		// First try to get the bukkit online player:
+//		if ( rPlayer != null ) {
+//			org.bukkit.entity.Player playerBukkit = Bukkit.getPlayer( rPlayer.getUUID() );
+//		}
+		
+		if ( rPlayer == null ) {
+		
+			// The requested player name is not within prison. Could be a typo or they 
+			// don't have ranks enabled.  First get a temp SpigotPlayer and then use 
+			// the supplied name and UUID to create a new RankPlayer so we can 
+			// create a valid SpigotPlayer that includes the RankPlayer even with the
+			// Ranks disabled.
+			Player player = Prison.get().getPlatform().getPlayer( playerName ).orElse( null );
 			
 			if ( player != null ) {
 				result = (SpigotPlayer) player;
-			}
-			else if ( useOfflinePlayer ) {
-				Player offLinePlayer = Prison.get().getPlatform().getOfflinePlayer( player.getUUID() ).orElse( null );
 				
-				if ( offLinePlayer != null ) {
-					
-					SpigotOfflinePlayer offlinePlayer = (SpigotOfflinePlayer) offLinePlayer;
-					
-					result = new SpigotPlayer( offlinePlayer.getWrapper().getPlayer() );
-				}
+				// Create a 'false' RankPlayer object:
+				
+				RankPlayer rp = new RankPlayer( player.getUUID(), player.getDisplayName() );
+
+				rPlayer = rp;
 			}
+			
+			
+		}
+		
+		
+		if ( rPlayer != null ) {
+			
+			result = SpigotPlayer.getSpigotPlayer( rPlayer );
+//			try {
+//			} 
+//			catch (SpigotPlayerException e) {
+//				
+////				String msg = String.format(
+////						"SpigotPlayer: Could not get a bukkit player object for '%s'. "
+////						+ "Is their name spelled correctly? "
+////						+ "Have they been removed or banned from spigot?",
+////						playerName
+////						);
+//				
+//				Output.get().logInfo( e.getMessage() );
+//				
+//			}
+			
+//			Player player = Prison.get().getPlatform().getPlayer( rPlayer.getUUID() ).orElse(null);
+//			
+//			if ( player != null ) {
+//				result = (SpigotPlayer) player;
+//			}
+//			else if ( useOfflinePlayer ) {
+//				
+//				
+////				Player offLinePlayer = Prison.get().getPlatform().getOfflinePlayer( rPlayer.getUUID() ).orElse( null );
+////				
+////				if ( offLinePlayer != null ) {
+////					
+////					SpigotOfflinePlayer offlinePlayer = (SpigotOfflinePlayer) offLinePlayer;
+////					
+////					result = new SpigotPlayer( offlinePlayer.getWrapper().getPlayer() );
+//				}
+//			}
 		}
 		
 //		if ( playerName != null ) {

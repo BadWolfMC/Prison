@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-03-25
 
 
+* **Prison Utils: Changed the way the platform players are used to resolve some issues when the players are offline.**
+
+
 * **PlayerCache Timer Task: Redo the submission of the task to be self contained and will not initiate the task if the Ranks are disabled.**
 
 
