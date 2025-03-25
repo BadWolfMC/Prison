@@ -654,16 +654,17 @@ public class PrisonUtilsMineBombs
 				
 				MineBombData bomb = mBombs.getConfigData().getBombs().get( key );
 				
+				String bombName = bomb.getName().trim();
 				
-				if ( bomb.getName().trim().length() > 0 && 
-						!bomb.getName().toLowerCase().contains(options.trim().toLowerCase())) {
+				if ( bombName.length() > 0 && options != null &&
+						!bombName.toLowerCase().contains(options.toLowerCase().trim())) {
 					continue;
 				}
 				
 				
 				String msg1 = String.format( 
 						"&7%s", 
-						bomb.getName()
+						bombName
 						);
 				messages.add( msg1 );
 				
@@ -890,9 +891,9 @@ public class PrisonUtilsMineBombs
 			// Get a SpigotPlayer object, which will be returned if the player has 
 			// access to those perms too. If ranks are disabled, then allow it to check
 			// bukkit's offline players.
-			boolean useOfflinePlayers = true;
+
 			SpigotPlayer player = checkPlayerPerms( sender, playerName, 
-					"prison.utils.bomb", "prison.utils.bomb.others", useOfflinePlayers );
+					"prison.utils.bomb", "prison.utils.bomb.others" );
 			
 			if ( player != null ) {
 				
@@ -950,8 +951,11 @@ public class PrisonUtilsMineBombs
 					
 					if ( bombs != null ) {
 						
+						SpigotItemStack sBombs = new SpigotItemStack( bombs );
+						
 						bombs.setAmount( count );
-						player.getWrapper().getInventory().addItem( bombs );
+						player.getInventory().addItem( sBombs );
+//						player.getWrapper().getInventory().addItem( bombs );
 						
 						player.getWrapper().updateInventory();
 //						player.updateInventory();
