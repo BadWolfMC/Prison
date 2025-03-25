@@ -8,7 +8,10 @@ import java.util.UUID;
 
 import tech.mcprison.prison.Prison;
 import tech.mcprison.prison.internal.Player;
+import tech.mcprison.prison.modules.Module;
+import tech.mcprison.prison.modules.ModuleElementType;
 import tech.mcprison.prison.ranks.data.RankPlayer;
+import tech.mcprison.prison.tasks.PrisonTaskSubmitter;
 
 /**
  * <p>This periodically ran task will go through all cached players and update 
@@ -53,6 +56,40 @@ public class PlayerCacheCheckTimersTask
 		this.processedKeys = new HashSet<>(); 
 	}
 	
+	/**
+	 * This will submit this task to run at regular intervals only if the rank
+	 * module is enabled.
+	 * 
+	 * If ranks are not enabled, then this task will not be started since there will be
+	 * no reason to use the player cache.
+	 * 
+	 * @return
+	 */
+	public static PlayerCacheRunnable submitPlayerStatsCacheUpdater() {
+		
+		PlayerCacheCheckTimersTask task = null;
+		
+		Module ranksModule = Prison.get().getModuleManager().getModule( 
+					ModuleElementType.RANK.name() );
+
+		if ( ranksModule != null && ranksModule.isEnabled()  ) {
+			
+			task = new PlayerCacheCheckTimersTask();
+			
+			int repeatTimeTicks = Prison.get().getPlatform()
+					.getConfigInt( PlayerCache.PLAYER_CACHE_UPDATE_PLAYER_STATS_CONFIG_NAME, 
+							PlayerCache.PLAYER_CACHE_UPDATE_PLAYER_STATS_SEC ) * 20;
+			
+			// Submit Timer Task to start running in 30 seconds (600 ticks) and then
+			// refresh stats every 10 seconds (200 ticks). 
+			// This does not update any files or interacts with bukkit/spigot.
+			int taskId = PrisonTaskSubmitter.runTaskTimerAsync( task, 600, repeatTimeTicks );
+			task.setTaskId( taskId );
+		}
+		
+		return task;
+	}
+	
 	@Override
 	public void run()
 	{
@@ -64,10 +101,18 @@ public class PlayerCacheCheckTimersTask
 		processCache();
 		
 	}
+	
+	/**
+	 * Only allow the cache to be processed if ranks is enabled.
+	 */
 	private void processCache() {
 		PlayerCache pCache = PlayerCache.getInstance();
 		
-		if ( pCache.getPlayers() != null && pCache.getPlayers().keySet().size() > 0 ) {
+	      Module ranksModule = Prison.get().getModuleManager().getModule( 
+	    		  								ModuleElementType.RANK.name() );
+	        
+	      if ( ranksModule != null && ranksModule.isEnabled() &&
+				pCache.getPlayers() != null && pCache.getPlayers().keySet().size() > 0 ) {
 			
 			try
 			{

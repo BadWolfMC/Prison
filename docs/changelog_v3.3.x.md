@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-03-25
 
 
+* **PlayerCache Timer Task: Redo the submission of the task to be self contained and will not initiate the task if the Ranks are disabled.**
+
+
 * **Player: Change the way to get a platform player.  Tie it to the Platform, and to use a new way to construct the SpigotPlayer and the SpigotOfflinePlayer** by creating a static function that can take a RankPlayer object.
 This fixes some of the issues with getting the wrong bukkit player object, or none, even when the player is online.
 By putting the bukkit code directly in the SpigotPlayer and SpigotOfflinePlayer objects, it's able to bypass some of the abstraction that was found in the platform class.
