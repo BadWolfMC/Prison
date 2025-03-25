@@ -17,6 +17,10 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19f 2025-03-25
 
 
+* **Ranks: Change the way ranks player get the player objects, especially when the player is offline.
+This fixes a few issues.**
+
+
 * **Prison Utils: Changed the way the platform players are used to resolve some issues when the players are offline.**
 
 

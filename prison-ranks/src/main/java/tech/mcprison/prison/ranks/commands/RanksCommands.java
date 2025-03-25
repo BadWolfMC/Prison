@@ -17,7 +17,6 @@ import tech.mcprison.prison.Prison;
 import tech.mcprison.prison.PrisonAPI;
 import tech.mcprison.prison.autofeatures.AutoFeaturesFileConfig.AutoFeatures;
 import tech.mcprison.prison.autofeatures.AutoFeaturesWrapper;
-import tech.mcprison.prison.cache.PlayerCache;
 import tech.mcprison.prison.cache.PlayerCachePlayerData;
 import tech.mcprison.prison.chat.FancyMessage;
 import tech.mcprison.prison.commands.Arg;
@@ -28,7 +27,6 @@ import tech.mcprison.prison.integration.Integration;
 import tech.mcprison.prison.integration.IntegrationType;
 import tech.mcprison.prison.integration.PermissionIntegration;
 import tech.mcprison.prison.internal.CommandSender;
-import tech.mcprison.prison.internal.OfflineMcPlayer;
 import tech.mcprison.prison.internal.Player;
 import tech.mcprison.prison.modules.ModuleElement;
 import tech.mcprison.prison.modules.ModuleElementType;
@@ -1618,14 +1616,18 @@ public class RanksCommands
     			@Arg(name = "options", def = "", description = "Options [perms]") String options
     			){
     	
-        RankPlayer rankPlayer = getRankPlayer(sender, null, playerName);
+        RankPlayer rankPlayer = getRankPlayer(sender, null, playerName );
         
         if ( rankPlayer == null ) {
         	rankupInvalidPlayerNameMsg( sender, playerName );
         	return;
         }
         
+        
+        // This is a SpigotPlayer object, with the bukkit player attached:
+        Player sPlayer = rankPlayer.getPlatformPlayer();
     	
+        
 //    	Player player = getPlayer( sender, playerName );
 //    	
 //    	if (player == null) {
@@ -1643,7 +1645,7 @@ public class RanksCommands
     	
 		
 		// need to see if the player is offline or online:
-		Player offlinePlayer = Prison.get().getPlatform().getOfflinePlayer( rankPlayer.getUUID() ).orElse( null );
+//		Player offlinePlayer = Prison.get().getPlatform().getOfflinePlayer( rankPlayer.getUUID() ).orElse( null );
     	
 		
     	//PlayerManager pm = PrisonRanks.getInstance().getPlayerManager();
@@ -1651,7 +1653,7 @@ public class RanksCommands
 //		RankPlayer rankPlayer = pm.getPlayer(player.getUUID(), player.getName());
 
 		// Get the cachedPlayer:
-		PlayerCachePlayerData cPlayer = PlayerCache.getInstance().getOnlinePlayer( rankPlayer );
+		PlayerCachePlayerData cPlayer = rankPlayer.getPlayerCachePlayerData();
 		
 		
 		
@@ -1660,17 +1662,28 @@ public class RanksCommands
 		msgs.add( msg1 );
 
 		
-		if ( offlinePlayer != null && cPlayer != null ) {
-			if ( cPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
-				cPlayer.setLastSeenDate( offlinePlayer.getLastSeenDate() );
+		if ( sPlayer != null && cPlayer != null ) {
+			if ( cPlayer.getLastSeenDate() < sPlayer.getLastSeenDate() ) {
+				cPlayer.setLastSeenDate( sPlayer.getLastSeenDate() );
 				cPlayer.setDirty( true );
 			}
 			
-			if ( rankPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
-				rankPlayer.setLastSeenDateTemp( offlinePlayer.getLastSeenDate() );
+			if ( rankPlayer.getLastSeenDate() < sPlayer.getLastSeenDate() ) {
+				rankPlayer.setLastSeenDateTemp( sPlayer.getLastSeenDate() );
 				rankPlayer.setDirty( true );
 			}
 		}
+//		if ( offlinePlayer != null && cPlayer != null ) {
+//			if ( cPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
+//				cPlayer.setLastSeenDate( offlinePlayer.getLastSeenDate() );
+//				cPlayer.setDirty( true );
+//			}
+//			
+//			if ( rankPlayer.getLastSeenDate() < offlinePlayer.getLastSeenDate() ) {
+//				rankPlayer.setLastSeenDateTemp( offlinePlayer.getLastSeenDate() );
+//				rankPlayer.setDirty( true );
+//			}
+//		}
 
 		
 		String lastSeen = cPlayer == null || cPlayer.getLastSeenDate() == 0 ? 
@@ -1785,12 +1798,12 @@ public class RanksCommands
 
 			}
 			
-			boolean isOp = offlinePlayer != null ? offlinePlayer.isOp() : rankPlayer.isOp();
-			boolean isPlayer = offlinePlayer != null ? offlinePlayer.isPlayer() : rankPlayer.isPlayer();
-			boolean isOnline = offlinePlayer != null ? offlinePlayer.isOnline() : rankPlayer.isOnline();
+			boolean isOp = sPlayer != null ? sPlayer.isOp() : rankPlayer.isOp();
+			boolean isPlayer = sPlayer != null ? sPlayer.isPlayer() : rankPlayer.isPlayer();
+			boolean isOnline = sPlayer != null ? sPlayer.isOnline() : rankPlayer.isOnline();
 			
-			boolean isPrisonPlayer = (rankPlayer instanceof Player);
-			boolean isPrisonOfflineMcPlayer = offlinePlayer != null ? true : (rankPlayer instanceof OfflineMcPlayer);
+//			boolean isPrisonPlayer = (rankPlayer instanceof Player);
+//			boolean isPrisonOfflineMcPlayer = offlinePlayer != null ? true : (rankPlayer instanceof OfflineMcPlayer);
 
 			if ( !isOnline ) {
 				String msgOffline = ranksPlayerPermsOfflineMsg();
@@ -1956,9 +1969,9 @@ public class RanksCommands
 								msgPlayerPerms,
 								(isOp ? " " + ranksPlayerOpMsg() : ""),
 								(isPlayer ? " " + ranksPlayerPlayerMsg() : ""),
-								(isOnline ? " " + ranksPlayerOnlineMsg() : " " + ranksPlayerOfflineMsg()),
-								(isPrisonOfflineMcPlayer ? " " + ranksPlayerPrisonOfflinePlayerMsg() : 
-									(isPrisonPlayer ? " " + ranksPlayerPrisonPlayerMsg() : ""))
+								(isOnline ? " " + ranksPlayerOnlineMsg() : " " + ranksPlayerOfflineMsg())
+//								(isPrisonOfflineMcPlayer ? " " + ranksPlayerPrisonOfflinePlayerMsg() : 
+//									(isPrisonPlayer ? " " + ranksPlayerPrisonPlayerMsg() : "")) 
 							) );
 					
 					if ( !isOnline ) {
@@ -2689,11 +2702,6 @@ public class RanksCommands
 		}
 		
 		RankPlayer player = PrisonRanks.getInstance().getPlayerManager().getPlayer(playerUuid, playerName);
-
-        // Well, this isn't supposed to happen...
-        if ( player == null ) {
-        	ranksRankupFailureToGetRankPlayerMsg( sender );
-        }
 
         return player;
 	}
