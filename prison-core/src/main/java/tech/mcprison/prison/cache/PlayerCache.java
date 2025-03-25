@@ -126,7 +126,10 @@ public class PlayerCache {
 		PrisonTaskSubmitter.cancelTask( saveAllTask.getTaskId() );
 
 		// Shutdown the timerTasks
-		PrisonTaskSubmitter.cancelTask( checkTimersTask.getTaskId() );
+		if ( checkTimersTask != null ) {
+			
+			PrisonTaskSubmitter.cancelTask( checkTimersTask.getTaskId() );
+		}
 
 		
 		// save all dirty cache items and purge cache:
@@ -424,18 +427,20 @@ public class PlayerCache {
 	
 	public PlayerCacheRunnable submitCacheUpdatePlayerStats() {
 		
-		PlayerCacheCheckTimersTask task = new PlayerCacheCheckTimersTask();
+		PlayerCacheRunnable task = PlayerCacheCheckTimersTask.submitPlayerStatsCacheUpdater();
 		
-		int repeatTimeTicks = Prison.get().getPlatform()
-						.getConfigInt( PLAYER_CACHE_UPDATE_PLAYER_STATS_CONFIG_NAME, 
-									   PLAYER_CACHE_UPDATE_PLAYER_STATS_SEC ) * 20;
-		
-		// Submit Timer Task to start running in 30 seconds (600 ticks) and then
-		// refresh stats every 10 seconds (200 ticks). 
-		// This does not update any files or interacts with bukkit/spigot.
-		int taskId = PrisonTaskSubmitter.runTaskTimerAsync( task, 600, repeatTimeTicks );
-		task.setTaskId( taskId );
-		
+//		PlayerCacheCheckTimersTask task = new PlayerCacheCheckTimersTask();
+//		
+//		int repeatTimeTicks = Prison.get().getPlatform()
+//						.getConfigInt( PLAYER_CACHE_UPDATE_PLAYER_STATS_CONFIG_NAME, 
+//									   PLAYER_CACHE_UPDATE_PLAYER_STATS_SEC ) * 20;
+//		
+//		// Submit Timer Task to start running in 30 seconds (600 ticks) and then
+//		// refresh stats every 10 seconds (200 ticks). 
+//		// This does not update any files or interacts with bukkit/spigot.
+//		int taskId = PrisonTaskSubmitter.runTaskTimerAsync( task, 600, repeatTimeTicks );
+//		task.setTaskId( taskId );
+//		
 		return task;
 	}
 	

@@ -69,6 +69,10 @@ public class RankPlayer
     private UUID uid;
     
     
+    private Player platformPlayer;
+    private long platformPlayerTimestamp = -1L;
+    
+    
     private transient File filePlayer;
     private transient File fileCache;
     
@@ -1224,24 +1228,47 @@ public class RankPlayer
 //	}
 	
 
+	/**
+	 * <p>This function will use the platform to get the platform player, which is tied to the
+	 * platform's player object.  So on Spigot, the platformPlayer will be a SpigotPlayer object,
+	 * with this instance of RankPlayer attached to it.
+	 * </p>
+	 * 
+	 * <p>Every five minutes, this function will refresh the platformPlayer since the instances
+	 * may actually change, such as if the player logged off and back on quickly.  It's never 
+	 * good to have a stale player object because then the wrong inventory gets updated.  But 
+	 * at least if that ever happens, then this will 'fix it', at worse, in 5 minutes. 
+	 * Getting the platform player is expensive, so we do need to cache it.
+	 * </p>
+	 * 
+	 */
 	@Override
 	public Player getPlatformPlayer() {
-		Player player = null;
 		
-		Optional<Player> oPlayer = Prison.get().getPlatform().getPlayer( uid );
+		long now = System.currentTimeMillis();
+		long fiveMin = 1000 * 60* 5;
 		
-		if ( oPlayer.isPresent() ) {
-			player = oPlayer.get();
-		}
-		else {
-			oPlayer = Prison.get().getPlatform().getOfflinePlayer( uid );
+		if ( platformPlayer == null || platformPlayerTimestamp + fiveMin < now ) {
 			
-			if ( oPlayer.isPresent() ) {
-				player = oPlayer.get();
-			}
+			platformPlayer = Prison.get().getPlatform().getPlatformPlayer( this );
+			
+			platformPlayerTimestamp = now;
 		}
 		
-		return player;
+//		Optional<Player> oPlayer = Prison.get().getPlatform().getPlayer( uid );
+//		
+//		if ( oPlayer.isPresent() ) {
+//			player = oPlayer.get();
+//		}
+//		else {
+//			oPlayer = Prison.get().getPlatform().getOfflinePlayer( uid );
+//			
+//			if ( oPlayer.isPresent() ) {
+//				player = oPlayer.get();
+//			}
+//		}
+		
+		return platformPlayer;
 	}
 	
 	

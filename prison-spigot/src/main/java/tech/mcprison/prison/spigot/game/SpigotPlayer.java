@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ExperienceOrb;
@@ -62,7 +64,19 @@ import tech.mcprison.prison.util.Location;
 import tech.mcprison.prison.util.Vector;
 
 /**
- * @author Faizaan A. Datoo
+ * <p>This is a wrapper class that stores the bukkit player object and enables it
+ * to be used with the internal Prison SpigotPlayer object. It also can store the
+ * RankPlayer object too.
+ * </p>
+ * 
+ * <p>To generate a SpigotPlayer from a RankPlayer there is a new 
+ * static function that will perform the construction of the SpigotPlayer.
+ * </p>
+ * 
+ * <p>This SpigotPlayer object is ONLY for players that are online.  This class 
+ * cannot exist for offline players, of which use the SpigotOfflinePlayer object.
+ * </p>
+ * 
  */
 public class SpigotPlayer 
 				extends SpigotEntity 
@@ -81,9 +95,50 @@ public class SpigotPlayer
 
     public SpigotPlayer(org.bukkit.entity.Player bukkitPlayer) {
         super(bukkitPlayer);
+        
         this.bukkitPlayer = bukkitPlayer;
     }
+    
+    
+    /**
+     * <p>This function sets up a SpigotPlayer object using a RankPlayer object.
+     * It basically joins the bukkit player to the existing RankPlayer.
+     * </p>
+     * 
+     * 
+     * <p>This will throw a SpigotPlayerException if the RankPlayer's UUID cannot be 
+     * tied to a bukkit player.  This should never happen since UUIDs come from bukkit
+     * with the exception of the player being removed from bukkit, but not yet from 
+     * prison.
+     * </p>
+     * 
+     * @param rankPlayer
+     * @throws SpigotPlayerException 
+     */
+    public static SpigotPlayer getSpigotPlayer( RankPlayer rankPlayer ) {
+    	
+    	SpigotPlayer result = null;
+    	
+    	// We have a RankPlayer object, but we need to connect this SpigotPlayer object 
+    	// to the bukkit player object.
 
+    	// NOTE: We're directly accessing bukkit here because it's more direct instead of 
+    	//       trying to do that through a few different function within the 
+    	//       SpigotPlatform.
+    	
+    	// First try to load a bukkit online player:
+    	org.bukkit.entity.Player bPlayer = Bukkit.getPlayer( rankPlayer.getUUID() );
+    	
+    	if ( bPlayer != null ) {
+    		result = new SpigotPlayer( bPlayer );
+    		
+    		result.setRankPlayer( rankPlayer );
+    	}
+    	
+    	return result;
+    }
+    
+    
     /**
      * <p>This constructs a player file named based upon the UUID followed 
      * by the player's name.  This format is used so it's easier to identify
@@ -161,6 +216,16 @@ public class SpigotPlayer
         return bukkitPlayer.getDisplayName();
     }
 
+	@Override
+	public String getName() {
+		
+		return bukkitPlayer != null ?
+				bukkitPlayer.getName() : 
+					rankPlayer != null ? 
+							rankPlayer.getName() : "";
+	}
+
+    
     @Override 
     public void setDisplayName(String newDisplayName) {
         bukkitPlayer.setDisplayName(newDisplayName);
@@ -185,7 +250,7 @@ public class SpigotPlayer
 
     @Override 
     public boolean isOnline() {
-        return bukkitPlayer.isOnline();
+        return bukkitPlayer == null ? false : bukkitPlayer.isOnline();
     }
 
     @Override 
@@ -445,7 +510,11 @@ public class SpigotPlayer
     	sb.append( "SpigotPlayer: " ).append( getName() )
     		.append( "  isOp=" ).append( isOp() )
     		.append( "  isOnline=" ).append( isOnline() )
-    		.append( "  isPlayer=" ).append( isPlayer() );
+    		.append( "  isPlayer=" ).append( isPlayer() )
+    		
+    		.append( "  hasBukkitPlayer=" ).append( bukkitPlayer != null )
+    		.append( "  hasRankPlayer=" ).append( rankPlayer != null )
+    		;
     	
     	return sb.toString();
     }
@@ -800,6 +869,11 @@ public class SpigotPlayer
 		}
 		return rankPlayer;
 	}
+	
+	private void setRankPlayer( RankPlayer rankPlayer ) {
+		this.rankPlayer = rankPlayer;
+	}
+	
 	
 	@Override
 	public PlayerCache getPlayerCache() {

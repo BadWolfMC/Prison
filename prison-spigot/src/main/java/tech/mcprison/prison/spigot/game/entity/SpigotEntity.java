@@ -281,10 +281,13 @@ public class SpigotEntity
 	}
 
 
-	@Override
-	public String getName() {
-		return bukkitEntity.getName();
-	}
+//	@Override
+//	public String getName() {
+//		
+//		return bukkitEntity != null ?
+//				bukkitEntity.getName() : 
+//					rankplayer;
+//	}
 
 	
 	@Override

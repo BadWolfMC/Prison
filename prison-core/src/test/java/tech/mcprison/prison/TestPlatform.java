@@ -81,6 +81,11 @@ public class TestPlatform implements Platform {
     }
     
     @Override
+    public Player getPlatformPlayer(RankPlayer rankPlayer) {
+    	return null;
+    }
+    
+    @Override
 	public RankPlayer getRankPlayer(UUID uuid, String name) {
     	return null;
     }

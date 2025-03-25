@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -42,6 +43,21 @@ public class SpigotOfflinePlayer
 	
 	public SpigotOfflinePlayer(OfflinePlayer offlinePlayer) {
 		this.offlinePlayer = offlinePlayer;
+	}
+
+	public static SpigotOfflinePlayer getOfflinePlayer( RankPlayer rankPlayer ) {
+		SpigotOfflinePlayer result = null;
+		
+		// Get an offline player:
+		OfflinePlayer olPlayer = Bukkit.getOfflinePlayer( rankPlayer.getUUID() );
+
+		if ( olPlayer != null ) {
+			result = new SpigotOfflinePlayer( olPlayer );
+			
+			result.setRankPlayer( rankPlayer );
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -443,12 +459,18 @@ public class SpigotOfflinePlayer
 	}
 
 	public RankPlayer getRankPlayer() {
+		
 		if ( rankPlayer == null && PrisonRanks.getInstance() != null &&
 				PrisonRanks.getInstance().isEnabled() ) {
+			
 			rankPlayer = PrisonRanks.getInstance().getPlayerManager().getPlayer( this );
 		}
 		return rankPlayer;
 	}
+	private void setRankPlayer( RankPlayer rankPlayer ) {
+		this.rankPlayer = rankPlayer;
+	}
+	
 	
 	@Override
 	public PlayerCache getPlayerCache() {
@@ -491,15 +513,20 @@ public class SpigotOfflinePlayer
 
 	@Override
 	public tech.mcprison.prison.internal.Player getPlatformPlayer() {
-		tech.mcprison.prison.internal.Player player = null;
 		
-		Optional<tech.mcprison.prison.internal.Player> oPlayer = Prison.get().getPlatform().getPlayer( getName() );
+		SpigotPlayer sPlayer = SpigotPlayer.getSpigotPlayer( getRankPlayer() );
 		
-		if ( oPlayer.isPresent() ) {
-			player = oPlayer.get();
-		}
+		return sPlayer;
 		
-		return player;
+//		tech.mcprison.prison.internal.Player player = null;
+//		
+//		Optional<tech.mcprison.prison.internal.Player> oPlayer = Prison.get().getPlatform().getPlayer( getName() );
+//		
+//		if ( oPlayer.isPresent() ) {
+//			player = oPlayer.get();
+//		}
+//		
+//		return player;
 	}
 
 	

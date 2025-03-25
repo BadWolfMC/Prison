@@ -74,6 +74,18 @@ public interface Platform {
     public void getWorldLoadErrors( ChatDisplay display );
     
     
+    /**
+     * <p>Providing a RankPlayer, generate and return a
+     * platform player object, that is connected to the
+     * platform, such as bukkit through the spigot platform.
+     * </p>
+     * 
+     * @param rankPlayer
+     * @return
+     */
+    public Player getPlatformPlayer(RankPlayer rankPlayer);
+    
+    
 	public RankPlayer getRankPlayer(UUID uuid, String name);
 	
 	
@@ -514,6 +526,5 @@ public interface Platform {
 
 
 	public MineBombEffectsData validateMineBombEffect(MineBombEffectsData mineBombEffectsData);
-
 
 }

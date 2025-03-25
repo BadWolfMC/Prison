@@ -136,6 +136,7 @@ import tech.mcprison.prison.spigot.game.SpigotCommandSender;
 import tech.mcprison.prison.spigot.game.SpigotHandlerList;
 import tech.mcprison.prison.spigot.game.SpigotOfflinePlayer;
 import tech.mcprison.prison.spigot.game.SpigotPlayer;
+import tech.mcprison.prison.spigot.game.SpigotPlayerException;
 import tech.mcprison.prison.spigot.game.SpigotPlayerUtil;
 import tech.mcprison.prison.spigot.game.SpigotWorld;
 import tech.mcprison.prison.spigot.placeholder.SpigotPlaceholders;
@@ -272,6 +273,27 @@ public class SpigotPlatform
     		
     	}
         
+    }
+    
+    @Override
+    public Player getPlatformPlayer( RankPlayer rankPlayer) {
+    	Player sPlayer = SpigotPlayer.getSpigotPlayer( rankPlayer );
+    	
+//		try {
+//		} 
+//		catch (SpigotPlayerException e) {
+			
+//			String msg = String.format(
+//					"SpigotPlatform.getPlatformPlayer: "
+//					+ "Could not get a bukkit player object for '%s'. "
+//					+ "Have they been removed or banned from spigot?",
+//					rankPlayer.getName()
+//					);
+			
+//			Output.get().logInfo( e.getMessage() );
+//		}
+		
+    	return sPlayer;
     }
     
     @Override
