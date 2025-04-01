@@ -356,16 +356,20 @@ public class Text
     }
     
     
-    public static String translateColorCodes(String text, char prefix, 
+    private static String translateColorCodes(String text, char prefix, 
     							char targetColorCode, char targetHexColorCode) {
         if (prefix == COLOR_CHAR) {
             return text; // No need to translate, it's already been translated
         }
         
+        // If the hex color codes are translated here, then it was not marking
+        // 'dirty' as being true, when it actually was.
+        // So to fix, eliminate 'dirty' and always convert the character array to
+        // a String.
         char[] b = translateHexColorCodes( text, targetHexColorCode ).toCharArray();
 
         int len = b.length;
-        boolean dirty = false;
+//        boolean dirty = false;
         boolean quote = false;
         boolean quoted = false;
         
@@ -385,11 +389,12 @@ public class Text
         	else if (b[i] == prefix && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr#xX".indexOf(b[i + 1]) > -1) {
                 b[i] = targetColorCode; // COLOR_CHAR; // 167; // Section symbol
                 b[i + 1] = Character.toLowerCase(b[i + 1]);
-                dirty = true;
+//                dirty = true;
             }
         }
 
-        String results = dirty ? new String(b) : text;
+        String results = new String(b);
+//        String results = dirty ? new String(b) : text;
         if ( quoted ) {
         	results = results.replace( "\\Q", "" ).replace( "\\E", "" );
         }
@@ -469,7 +474,7 @@ public class Text
      * @param targetColorCode
      * @return
      */
-    public static String translateHexColorCodes( String text, char targetColorCode ) {
+    protected static String translateHexColorCodes( String text, char targetColorCode ) {
     	StringBuilder sb = new StringBuilder();
     	
     	if ( text != null && !text.trim().isEmpty() ) {
@@ -515,7 +520,7 @@ public class Text
      * @param targetColorCode the char value that is used to inject as a color code
      * @return
      */
-    public static String translateHexColorCodesCore(String message, char targetColorCode) {
+    private static String translateHexColorCodesCore(String message, char targetColorCode) {
     	String results = "";
     	
     	if ( message != null ) {
@@ -545,7 +550,7 @@ public class Text
     }
     	      
     
-    public static String convertToAmpColorCodes( String textEncoded ) {
+    private static String convertToAmpColorCodes( String textEncoded ) {
     	
     	String results = textEncoded;
     	
