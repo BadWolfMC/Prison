@@ -17,6 +17,9 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19h 2025-04-07
 
 
+* **Added zEssentials and zMenu to Prison's soft depends so prison will load after those plugins.**
+There was an issue with prison trying to access vault's economy before zEssentials could properly hook in to it.  This should allow zEss to fully enabled the economy now.
+
 
 * **3.3.0-alpha.19h 2025-04-07**
 The build for alpha.19g did not reflect the correct version.  So incrementing the version so it is clear if someone is using the correct version or not.
