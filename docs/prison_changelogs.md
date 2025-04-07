@@ -19,6 +19,7 @@ may be insightful in to some of the evolutionary processes.
 These build logs represent the work that has been going on within prison. 
 
  - **[v3.3.0-alpha - Current](changelog_v3.3.x.md)**
+    - **[v3.3.0-alpha - Current - Part 2](changelog_v3.3.xb.md)**
     - Future updates will be under the v3.3.x release
  
  
