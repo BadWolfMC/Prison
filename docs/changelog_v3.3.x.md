@@ -14,9 +14,13 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19f 2025-03-31
+# 3.3.0-alpha.19g 2025-03-31
 
-* **These was a problem with hex color codes being used in lore (or elsewhere probably) where they are not being translated unless there is another color, such as &7 anywhere else in the String.  
+
+
+* **3.3.0-alpha.19g 2025-03-31*
+
+* **These was a problem with hex color codes being used in lore (or elsewhere probably) where they are not being translated unless there is another color**, such as &7 anywhere else in the String.  
 The problem was that the hex conversion was working perfectly well.  But since the "dirty" variable was not getting modified, since the hex colors were applied before that point in processing, it would always revert back to the original unchanged String value because it thought there was nothing that changed.
 To fix the problem, I eliminated the dirty variable and am always converting the byte array back to a String value.  So no need to check if dirty anymore, since it always converts.
 
