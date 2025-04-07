@@ -3527,11 +3527,16 @@ public class MinesCommands
     	if ( sender.isPlayer() ) {
     		teleportPlayer( (Player) sender, m, target );
     		
-    		String msg = String.format( 
-    				"&3Teleported to mine %s.  %s",
-    				m.getTag(),
-    				( sender.getMiscText() == null ? "" : sender.getMiscText() )
-    				);
+    		String msg = teleportSuccessMsg( m.getTag() );
+    		
+    		if ( sender.getMiscText() != null ) {
+    			msg = msg + "  " + sender.getMiscText();
+    		}
+//    		String msg = String.format( 
+//    				"&3Teleported to mine %s.  %s",
+//    				m.getTag(),
+//    				( sender.getMiscText() == null ? "" : sender.getMiscText() )
+//    				);
     		sender.sendMessage( msg );
     		
 //    		m.teleportPlayerOut( (Player) sender, target );
