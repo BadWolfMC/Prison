@@ -102,5 +102,26 @@ public interface CompatibilityBlocks
      */
 	public void setCustomModelData( ItemStack itemStack, int customModelData );
 
+	
+	/**
+	 * <p>With spigot 1.14 and newer, there is a function on a block that
+	 * identifies if a block is passable.  The description in the api docs are:
+	 * </p>
+	 * 
+	 * <pre>
+	 * Checks if this block is passable.
+
+A block is passable if it has no colliding parts that would prevent 
+players from moving through it.
+
+Examples: Tall grass, flowers, signs, etc. are passable, but open doors, 
+fence gates, trap doors, etc. are not because they still have parts that 
+can be collided with.
+	 * </p>
+	 * 
+	 * @param bBlock
+	 * @return
+	 */
+	public boolean isPassable( Block bBlock );
 
 }

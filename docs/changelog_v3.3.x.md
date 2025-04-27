@@ -14,7 +14,12 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-04-07
+# 3.3.0-alpha.19h 2025-04-27
+
+
+* **Blocks: added an isPassable() function to the compatibility functions since this function does not exist in bukkit versions less than 1.14.**
+This is used when throwing bombs.
+
 
 
 * **Change logs: Restructured the change logs so the primary file is not quite as large.  It was starting to run in to some lag issues when editing.**

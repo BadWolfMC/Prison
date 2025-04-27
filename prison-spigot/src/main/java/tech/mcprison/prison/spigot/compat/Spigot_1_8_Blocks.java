@@ -6,6 +6,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 
 import tech.mcprison.prison.internal.block.BlockFace;
@@ -844,5 +845,83 @@ public abstract class Spigot_1_8_Blocks
 	}
 
 
+    
+	/**
+	 * <p>With spigot 1.14 and newer, there is a function on a block that
+	 * identifies if a block is passable.  The description in the api docs are:
+	 * </p>
+	 * 
+	 * <pre>
+	 * Checks if this block is passable.
+
+A block is passable if it has no colliding parts that would prevent 
+players from moving through it.
+
+Examples: Tall grass, flowers, signs, etc. are passable, but open doors, 
+fence gates, trap doors, etc. are not because they still have parts that 
+can be collided with.
+	 * </p>
+	 * 
+	 * <p>For 1.8 through 1.13.x, just check the material type for 
+	 * some of the possibilities like what is listed.  This does not
+	 * need to be a complete list, but it can also be expanded as 
+	 * needed based upon feedback too. Some items really don't matter,
+	 * such as crops or short grass, since it's only about one block
+	 * from the ground, so the item, if thrown, will land near that 
+	 * area.
+	 * </p>
+	 * 
+	 * @param bBlock
+	 * @return
+	 */
+    @Override
+	public boolean isPassable( Block bBlock ) {
+    	boolean results = false;
+    	
+    	if ( bBlock != null ) {
+    		
+			
+    		XMaterial xMat = getXMaterial( bBlock );
+    		
+    		if ( xMat != null ) {
+    		
+				boolean isSign = xMat.name().toLowerCase().contains("sign");
+				
+				if ( isSign || XBlock.isCrop(xMat) ) {
+					results = true;
+				}
+				
+				else {
+					
+					
+					switch ( xMat ) {
+					case AIR:
+
+					case SHORT_GRASS:
+					case TALL_GRASS:
+					case SEAGRASS:
+					case TALL_SEAGRASS:
+						
+					case VINE:	
+					case CAVE_VINES_PLANT:	
+					case TWISTING_VINES_PLANT:
+					case WEEPING_VINES_PLANT:
+						
+						results = true;
+						break;
+						
+					default:
+						break;
+					}
+				}
+				
+				
+				
+			}
+    		
+    	}
+    	
+    	return results;
+    }
     
 }

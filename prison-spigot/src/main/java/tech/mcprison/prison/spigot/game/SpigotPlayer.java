@@ -315,10 +315,12 @@ public class SpigotPlayer
     	
 //    	List<tech.mcprison.prison.internal.block.Block> results = new ArrayList<>();
     	
+    	
+    	
     	List<Block> blocks = bukkitPlayer.getLineOfSight( null, 256 );
     	for ( Block block : blocks ) {
     		if ( block != null && block.getType() != Material.AIR &&
-    				!block.isPassable() ) {
+    				!SpigotCompatibility.getInstance().isPassable(block) ) {
 
     			
     			// return the first non-null and non-AIR block, which will 
