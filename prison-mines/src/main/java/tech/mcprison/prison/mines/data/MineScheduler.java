@@ -889,9 +889,12 @@ public abstract class MineScheduler
 			
 			
 			// cancel existing job:
-			if ( getTaskId() != null ) {
-				PrisonTaskSubmitter.cancelTask( getTaskId() );
-			}
+			// Warning... do not cancel current tasks.  It may be breaking the 
+			// last block. If another thread is initiating a reset then it won't make it to 
+			// this part of the code.
+//			if ( getTaskId() != null ) {
+//				PrisonTaskSubmitter.cancelTask( getTaskId() );
+//			}
 			
 			// Clear jobStack and set currentJob to run the RESET with zero delay:
 			getJobStack().clear();

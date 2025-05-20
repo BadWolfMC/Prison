@@ -14,7 +14,11 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-04-27
+# 3.3.0-alpha.19h 2025-05-20
+
+
+* **Mines: Last block break bug fix.  Fixes an issue where the task to break the last few blocks is getting canceled on some servers because the mine reset is running before the blocks can be removed.**
+The mine reset was canceling all tasks, when it should not be. The idea of canceling the tasks was if there was another reset being submitted, but that cannot happen due to the mutex.
 
 
 * **Blocks: added an isPassable() function to the compatibility functions since this function does not exist in bukkit versions less than 1.14.**
