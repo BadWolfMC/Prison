@@ -327,6 +327,8 @@ public class Bounds {
     
 	/**
 	 * <p>Sets the world on the min, max, and center objects.
+	 * If the other locations have a different world set, it 
+	 * will be replaced with this new world.
 	 * </p>
 	 * 
 	 * @param world
@@ -334,13 +336,13 @@ public class Bounds {
     public void setWorld( World world ) {
     	if ( world != null ) {
     		
-    		if ( getMin().getWorld() == null ) {
+    		if ( getMin() != null ) {
     			getMin().setWorld( world );
     		}
-    		if ( getMax().getWorld() == null ) {
+    		if ( getMax() != null ) {
     			getMax().setWorld( world );
     		}
-    		if ( getCenter().getWorld() == null ) {
+    		if ( getCenter() != null ) {
     			getCenter().setWorld( world );
     		}
     	}
@@ -524,6 +526,13 @@ public class Bounds {
         return "Bounds{" + "min=" + min.toCoordinates() + ", max=" + max.toCoordinates() + '}';
     }
 
+	
+	/**
+	 * <p>This will check to see if two Bounds are equal.
+	 * If any point is null, then this should always return
+	 * false.
+	 * </p>
+	 */
     @Override 
     public boolean equals(Object o) {
         if (this == o) {
@@ -534,9 +543,19 @@ public class Bounds {
         }
 
         Bounds bounds = (Bounds) o;
-        return min != null ?
-            min.equals(bounds.min) :
-            bounds.min == null && (max != null ? max.equals(bounds.max) : bounds.max == null);
+        
+        // If any point is null, then this must return false:
+        if ( getMin() == null || getMax() == null || 
+        		bounds.getMin() == null || bounds.getMax() == null ) {
+        	return false;
+        }
+        
+        return getMin().equals(bounds.getMin()) &&
+        		getMax().equals(bounds.getMax());
+        
+//        return min != null ?
+//        		min.equals(bounds.min) :
+//        			bounds.min == null && (max != null ? max.equals(bounds.max) : bounds.max == null);
     }
 
     @Override public int hashCode() {

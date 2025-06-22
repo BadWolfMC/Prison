@@ -14,7 +14,12 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-05-20
+# 3.3.0-alpha.19h 2025-06-22
+
+
+* **Bounds: Fixed an obscure bug where changing the World was not updating existing instances of a world.**  This would mostly be impacting unit tests, so this would never have been an issue with actual running of prison.
+Cleaned up the equals since something was not looking correct with some of the logic.  Nothing really changed, but slightly altered to simplify the logic to ensure there are not problems.
+
 
 
 * **Mines: Last block break bug fix.  Fixes an issue where the task to break the last few blocks is getting canceled on some servers because the mine reset is running before the blocks can be removed.**

@@ -37,13 +37,76 @@ public class BoundsTest {
         Bounds otherBounds =
             new Bounds(new Location(null, 0.0, 0.0, 0.0), new Location(null, 10.0, 10.0, 10.0));
 
+        // Since world is null, this cannot be true:
+        // Bounds should never exist without a world, otherwise it is virtual.
+        assertFalse(bounds.equals(otherBounds));
+
+        // NOTE: How would this ever be true???
+//        assertTrue(bounds.equals(otherBounds));
+        
+        TestWorld world1 = new TestWorld("test1");
+        TestWorld world2 = new TestWorld("test2");
+        
+        bounds.setWorld( world1 );
+        otherBounds.setWorld( world2 );
+        
+        assertFalse(bounds.equals(otherBounds));
+
+        otherBounds.setWorld( world1 );
+        
+        assertTrue(bounds.equals(otherBounds));
+        
+        otherBounds.getMax().setX( 10.1 );
+        
         assertTrue(bounds.equals(otherBounds));
     }
     
     @Test 
-    public void fail() throws Exception {
-    	assertTrue( true );
+    public void equalsInSameBlock() throws Exception {
+    	
+    	TestWorld world1 = new TestWorld("test1");
+    	
+    	Bounds bounds =
+    			new Bounds(new Location(world1, 0.0, 0.0, 0.0), new Location(world1, 10.0, 10.0, 10.0));
+    	Bounds otherBounds =
+    			new Bounds(new Location(world1, 0.0, 0.0, 0.0), new Location(world1, 10.0, 10.0, 10.0));
+
+    	
+    	// Check to ensure these are identical before changing anything:
+    	assertTrue(bounds.equals(otherBounds));
+
+    	
+    	// Confirm that it will fail if outside of existing block:
+    	otherBounds.getMax().setX( 9.0 );
+    	assertFalse(bounds.equals(otherBounds));
+    	
+
+    	// Now try a somewhere in the original block, using fractions:
+    	otherBounds.getMax().setX( 10.001 );
+    	assertTrue(bounds.equals(otherBounds));
+    	
+    	// And a few other variations:
+    	otherBounds.getMax().setX( 10.5 );
+    	assertTrue(bounds.equals(otherBounds));
+    	
+    	otherBounds.getMax().setX( 10.999999 );
+    	assertTrue(bounds.equals(otherBounds));
+
+    	otherBounds.getMax().setX( 10.000001 );
+    	otherBounds.getMax().setY( 10.999999 );
+    	otherBounds.getMax().setY( 10.5 );
+    	assertTrue(bounds.equals(otherBounds));
+    	
+    	
+    	assertTrue(bounds.equals(otherBounds));
+    	
+    	
     }
+    
+//    @Test 
+//    public void fail() throws Exception {
+//    	assertTrue( true );
+//    }
 
     @Test 
     public void within() throws Exception {
