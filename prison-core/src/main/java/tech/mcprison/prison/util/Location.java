@@ -178,16 +178,23 @@ public class Location {
 		this.direction = direction;
 	}
     
+	/**
+	 * <p>Return the integer part of the double, which means
+	 * it should not be rounded; use floor instead.
+	 * </p>
+	 * 
+	 * @return
+	 */
 	public int getBlockX() {
-        return Math.toIntExact(Math.round(getX()));
+        return (int) Math.floor(getX());
     }
 
     public int getBlockY() {
-        return Math.toIntExact(Math.round(getY()));
+        return (int) Math.floor(getY());
     }
 
     public int getBlockZ() {
-        return Math.toIntExact(Math.round(getZ()));
+        return (int) Math.floor(getZ());
     }
 
     public Block getBlockAt() {
@@ -224,6 +231,40 @@ public class Location {
 		this.isCorner = isCorner;
 	}
 	
+	/**
+	 * <p>This compares to see if two different locations are the same.
+	 * </p>
+	 * 
+	 * <p>There are a few problems with this function. First we need to 
+	 * figure out if we want to check to see if we have exactly the same 
+	 * object or not, of which we shouldn't expect it to be the same object
+	 * or we could just use the "==" equality test on the two objects.
+	 * Therefore, we know it's not going to be the same object, but we want
+	 * to determine if two objects are at the same location.  This is 
+	 * yet another problem.  What does it mean to be in the same location?
+	 * If item A has an x value of 3.84928 and item B has 3.1489203 should
+	 * that be the same location?  Yes, it should.  Because the two items
+	 * are within the same "block" for that x value (ignoring y and z axis
+	 * for this example).
+	 * </p>
+	 * 
+	 * <p>Therefore, this should check to see if two locations are within
+	 * the same block or not.  Likewise, where the "item" is looking should 
+	 * never be a factor since two items can be looking off in to different
+	 * directions and still be in the same block.  In other words, this
+	 * check of having the same location is for the physical block, and not
+	 * where they are looking.
+	 * </p>
+	 * 
+	 * <p>There may be situations were the pitch and yaw must match, but
+	 * in general, it should not be used for this function.  Also, the float
+	 * values should NOT be used either since an x value of 3.123456 will not
+	 * be considered in the same block if it has a value of 3.123450 since 
+	 * the block is not what that is checking.  So integer values must
+	 * be used in this method.
+	 * </p>
+	 * 
+	 */
 	@Override 
 	public boolean equals(Object o) {
         if (this == o) {
@@ -235,11 +276,22 @@ public class Location {
 
         Location location = (Location) o;
 
-        return Double.compare(location.x, x) == 0 && Double.compare(location.y, y) == 0
-            && Double.compare(location.z, z) == 0 && Float.compare(location.pitch, pitch) == 0
-            && Float.compare(location.yaw, yaw) == 0 && (world != null ?
-            world.getName().equals(location.world.getName()) :
-            location.world == null);
+        // Must be in the same world:
+        if ( world == null || location.world == null || 
+        		!getWorld().getName().equalsIgnoreCase( location.getWorld().getName()) ) {
+        	return false;
+        }
+        
+        
+        return location.getBlockX() == getBlockX() &&
+        	   location.getBlockY() == getBlockY() &&
+        	   location.getBlockZ() == getBlockZ();
+
+//        return Double.compare(location.x, x) == 0 && Double.compare(location.y, y) == 0
+//            && Double.compare(location.z, z) == 0 && Float.compare(location.pitch, pitch) == 0
+//            && Float.compare(location.yaw, yaw) == 0 && (world != null ?
+//            world.getName().equals(location.world.getName()) :
+//            location.world == null);
 
     }
 

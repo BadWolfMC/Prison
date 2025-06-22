@@ -17,6 +17,13 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19h 2025-06-22
 
 
+* **Locations: Fixed a potential problem with getting the wrong block, or processing the wrong block.**
+Found the older code was rounding doubles within the block, so instead of being able to confirm that the given block was the same as another, if the position was greater than or equal to x.5 then it would round up to a different block next to it.
+Fixed by using floor and comparing integer values so the selected block will always be the same block.
+I am not aware of any specific reported bug related to this problem, but it would have occurred around selecting blocks (like when laying out a mine) or be an issue one the edge of mines where if a block is hit near the edge the rounding could have checked the block outside of the mine instead.  I suspect occurrences of this bug were not too frequent, and appeared intermittent.
+Note that in the prior commit, BoundsTest class was also benefiting from this fix and should have been included in this commit.
+
+
 * **Bounds: Fixed an obscure bug where changing the World was not updating existing instances of a world.**  This would mostly be impacting unit tests, so this would never have been an issue with actual running of prison.
 Cleaned up the equals since something was not looking correct with some of the logic.  Nothing really changed, but slightly altered to simplify the logic to ensure there are not problems.
 
