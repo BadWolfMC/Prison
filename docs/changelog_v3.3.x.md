@@ -14,7 +14,13 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-06-22
+# 3.3.0-alpha.19h 2025-06-26
+
+
+* **Mine Bombs: Bug fixes. There are a few bug fixes in these changes which were resulting in mine bombs not working at all, or causing some odd behaviors.**
+One internal change was to pass the mine in to more functions so some of the processes can be more mine aware, and to prevent trying to find the mine a second time. Benefit is reduced processing and slightly faster speeds.
+One issue was that the initial block being processed for the explosion was not actually in the mine when it was on the surface, so prison would ignore that event. Fix was to shift the block down in to the mine so it would be usable. This was primarily when the Y-offset was set to ZERO.  If it was any negative value, then the bombs would work well, but zero was the default value.
+Some messages sent to the console have been enhanced to provide better clues with what's happening when in debug mode.  So if it is a config setting that is preventing the bomb from being tied to the mine, it will be more obvious.
 
 
 * **Locations: Fixed a potential problem with getting the wrong block, or processing the wrong block.**

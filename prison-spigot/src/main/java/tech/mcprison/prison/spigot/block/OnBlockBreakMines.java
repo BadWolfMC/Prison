@@ -204,24 +204,38 @@ public class OnBlockBreakMines
 
 	}
 	
-	public Mine findMine( SpigotPlayer player, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	public Mine findMineIncludeTopBottomOfMine( SpigotPlayer player, SpigotBlock sBlock, 
+			List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
 	{
-		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent );
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, false );
+	}
+	
+	public Mine findMine( SpigotPlayer player, SpigotBlock sBlock, 
+								List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	{
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, true );
 	}
 	
 	public Mine findMine( Player player, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
 	{
-		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent );
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, true );
 	}
 	
-	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, 
+					List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent ) {
+		return findMine( playerUUID, sBlock, altBlocksSource, pmEvent, true );
+	}
+	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, 
+					List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent, boolean exact )
 	{
 //		Long playerUUIDLSB = Long.valueOf( playerUUID.getLeastSignificantBits() );
 
 		// Get the cached mine, if it exists:
 		Mine mine = getPlayerCache().get( playerUUID.toString() );
 		
-		if ( mine == null || sBlock != null && !mine.isInMineExact( sBlock.getLocation() ) )
+		if ( mine == null || sBlock != null && 
+				( exact && !mine.isInMineExact( sBlock.getLocation() ) || 
+				  !exact && !mine.isInMineIncludeTopBottomOfMine( sBlock.getLocation() ) ) )
 		{
 			// Look for the correct mine to use.
 			// Set mine to null so if cannot find the right one it will return a
@@ -240,7 +254,10 @@ public class OnBlockBreakMines
 				for ( Block bBlock : altBlocksSource )
 				{
 					SpigotBlock sBlockAltBlock = SpigotBlock.getSpigotBlock( bBlock );
-					mine = findMineLocation( sBlockAltBlock );
+					
+					mine = exact ? 
+								findMineLocation( sBlockAltBlock ) :
+								findMineLocationIncludeTopBottomOfMine( sBlockAltBlock );
 					if ( mine != null )
 					{
 
@@ -968,6 +985,11 @@ public class OnBlockBreakMines
 	private Mine findMineLocation( SpigotBlock block ) {
 		return getPrisonMineManager() == null || block == null || block.getLocation() == null ? 
 				null : getPrisonMineManager().findMineLocationExact( block.getLocation() );
+	}
+	
+	private Mine findMineLocationIncludeTopBottomOfMine( SpigotBlock block ) {
+		return getPrisonMineManager() == null || block == null || block.getLocation() == null ? 
+				null : getPrisonMineManager().findMineLocationIncludeTopBottomOfMine( block.getLocation() );
 	}
 	
 

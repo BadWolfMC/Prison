@@ -242,16 +242,50 @@ public class PrisonBombListener
         					.runTaskTimer(
         							new Runnable() {
         								private List<Location> locs = new ArrayList<>();
+        								private int checks = 0;
+        								
+        								/**
+        								 * <p>Remove the bomb.
+        								 * </p>
+        								 */
+        								private void removeBomb() {
+        									
+        									// Cancel this task:
+											SpigotPrison.getInstance().getScheduler().cancelTask( mineBomb.getTask() );
+											
+											// Cancel the cancellation task:
+											SpigotPrison.getInstance().getScheduler().cancelTask(taskId);
+											
+											
+											// remove armor stand:
+											aStnd.remove();
+        								}
         								
         								public void run() {
         									Location loc = aStnd.getLocation();
         									locs.add(loc);
         									
+        									// Only keep no more than 4 locations in the list.  Purge the oldest.
         									if ( locs.size() > 4 ) {
         										locs.remove(0);
         									}
         									
+//        									String msg = String.format( 
+//        											"### MineBomb: tracking minebomb movements.  count=%s  locs=%s  current: %s", 
+//        											Integer.toString(checks++),
+//        											Integer.toString(locs.size()),
+//        											loc.toWorldCoordinates() );
+//        									Output.get().logInfo( msg );
+        									
+        									// If mine bomb does not land it may have fallen in the void.. so remove it:
+        									if ( checks > 100 ) {
+        										removeBomb();
+        									}
+        									
         									if ( locs.size() == 4 ) {
+        										
+        										// When there are four locations, then check to ensure the mine
+        										// bomb is no longer moving... 
         										if ( locs.get(0).equals(locs.get(1)) && 
         												locs.get(1).equals(locs.get(2)) &&
         												locs.get(2).equals(locs.get(3))
@@ -260,15 +294,17 @@ public class PrisonBombListener
         											// Set the mine bomb's location where the item has landed:
         											mineBomb.setPlacedBombLocation( loc );
         											
-        											// Cancel this task:
-        											SpigotPrison.getInstance().getScheduler().cancelTask( mineBomb.getTask() );
+        											removeBomb();
         											
-        											// Cancel the cancellation task:
-        											SpigotPrison.getInstance().getScheduler().cancelTask(taskId);
-        											
-        											
-        											// remove armor stand:
-        											aStnd.remove();
+//        											// Cancel this task:
+//        											SpigotPrison.getInstance().getScheduler().cancelTask( mineBomb.getTask() );
+//        											
+//        											// Cancel the cancellation task:
+//        											SpigotPrison.getInstance().getScheduler().cancelTask(taskId);
+//        											
+//        											
+//        											// remove armor stand:
+//        											aStnd.remove();
         											
         											// Start mine bomb animation:
 //        											loc.setY( loc.getY() );
@@ -283,7 +319,7 @@ public class PrisonBombListener
 //    								if ( iStack.getAmount() == 0 ) {
 //    									player.getInventory().removeItem( iStack );
 //    								}
-        												
+
         												processBombTriggerEvent( sPlayer, mine, mineBomb, targetBlock, hand );
         											}
         											
@@ -529,7 +565,7 @@ public class PrisonBombListener
 		
 		boolean canceled = false;
 		
-		if ( getPrisonUtilsMineBombs().setBombInHand( sPlayer, mineBomb, sBlock, hand ) ) {
+		if ( getPrisonUtilsMineBombs().setBombInHand( sPlayer, mine, mineBomb, sBlock, hand ) ) {
 			
 			// The item was a bomb and it was activated.
 			// Cancel the event so the item will not be placed or processed farther.
@@ -557,13 +593,22 @@ public class PrisonBombListener
 	 * @return
 	 */
 	private Mine getMine(SpigotPlayer sPlayer, MineBombData mineBomb, SpigotBlock sBlock ) {
-		Mine mine = blockBreakMines.findMine( sPlayer, sBlock, null, null);
+		
+		Mine mine = blockBreakMines.findMineIncludeTopBottomOfMine( sPlayer, sBlock, null, null);
+		
+		if ( mine == null ) {
+			// Try testing one block lower:
+			SpigotBlock altSBlock = (SpigotBlock) sBlock.getLocation()
+					.getLocationAtDelta(0, -1, 0)
+					.getBlockAt();
+			mine = blockBreakMines.findMineIncludeTopBottomOfMine( sPlayer, altSBlock, null, null);
+		}
 		
 		if ( mine == null ) {
 			// player is not in a mine, so do not allow them to trigger a mine bomb:
 			
 			if ( Output.get().isDebug() ) {
-				String msg = "MineBombs: Cannot use mine bombs use outside of mines.";
+				String msg = "MineBombs: Cannot use mine bombs outside of mines.";
 				sPlayer.setActionBar( msg );
 //				Output.get().logInfo( msg );
 			}
