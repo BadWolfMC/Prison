@@ -40,7 +40,6 @@ import tech.mcprison.prison.internal.block.Block;
 import tech.mcprison.prison.mines.data.Mine;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.api.ExplosiveBlockBreakEvent;
-import tech.mcprison.prison.spigot.block.OnBlockBreakMines;
 import tech.mcprison.prison.spigot.block.PrisonItemStackNotSupportedRuntimeException;
 import tech.mcprison.prison.spigot.block.SpigotBlock;
 import tech.mcprison.prison.spigot.block.SpigotItemStack;
@@ -1202,12 +1201,14 @@ public class PrisonUtilsMineBombs
 	 * </p>
 	 * 
 	 * @param sPlayer
+	 * @param mine2 
 	 * @param bomb 
 	 * @param sBlock 
 	 * @param hand
 	 * @return
 	 */
 	public boolean setBombInHand( SpigotPlayer sPlayer, 
+					Mine mine, 
 					MineBombData bomb, 
 					SpigotBlock sBlock, 
 					tech.mcprison.prison.spigot.compat.Compatibility.EquipmentSlot hand ) {
@@ -1306,24 +1307,49 @@ public class PrisonUtilsMineBombs
 						
 						
 						
-						// For mine bombs, take the block below where the bomb's item was dropped.  The floating 
-						// item is not the block that needs to be the target block for the explosion.  Also, the block
-						// if it is on top of the mine, would be identified as being outside of the mine.
-						int count = 0;
-						boolean isAir = bombBlock.isEmpty();
-						while (  (count++ <= ( isAir ? 1 : 0 ) || bombBlock.isEmpty()) && bombBlock.getLocation().getBlockY() > 1 ) {
+						// For mine bombs, apply any y adjustments for each bomb. This would either raise
+						// or lower the bomb block.
+						int adjustY = bomb.getPlacementAdjustmentY();
+						
+						if ( adjustY != 0 ) {
 							
-							int adjustY = bomb.getPlacementAdjustmentY();
-							
-							Block tempBlock = bombBlock.getLocation().getBlockAtDelta( 0, adjustY, 0 );
-							if ( tempBlock != null && tempBlock instanceof SpigotBlock ) {
-								bombBlock = (SpigotBlock) tempBlock;
-							}
-							
-//    							Output.get().logInfo( 
-//    									"#### PrisonUtilsMineBombs:  bomb y loc: " + bombBlock.getWrapper().getLocation().getBlockY() + 
-//    										"  " + bombBlock.getLocation().getBlockY() + "  count= " + count );
+							bombBlock = getNextBlockInTheMine(mine, bombBlock, adjustY);
 						}
+						
+						
+						// if the block is air, then try 3 times to get a non-air block by taking
+						// the next lower block:
+						int i = 0;
+						while ( i++ <= 3 && bombBlock.isAir() || 
+								!mine.isInMineExact( bombBlock.getLocation() )) {
+							
+							bombBlock = getNextBlockInTheMine(mine, bombBlock, -1 );
+						}
+						
+//						// This did not help... the block was not in the mine, 
+//						// but it did not help with setting it off...
+//						if ( !mine.isInMine( bombBlock ) ) {
+//							// if selected block is not in the mine, then it's probably on top.
+//							// Take the block that is under it:
+//							
+//							bombBlock = getNextLowerBlockInTheMine(mine, bombBlock, 1 );
+//
+//						}
+						
+						// DO NOT USE: If placementAdjustmentY is zero then this goes in to endless loop:
+//						int count = 0;
+//						while (  (count++ <= ( isAir ? 1 : 0 ) || bombBlock.isEmpty()) && bombBlock.getLocation().getBlockY() > 1 ) {
+//							
+//							
+//							Block tempBlock = bombBlock.getLocation().getBlockAtDelta( 0, adjustY, 0 );
+//							if ( tempBlock != null && tempBlock instanceof SpigotBlock ) {
+//								bombBlock = (SpigotBlock) tempBlock;
+//							}
+//							
+////    							Output.get().logInfo( 
+////    									"#### PrisonUtilsMineBombs:  bomb y loc: " + bombBlock.getWrapper().getLocation().getBlockY() + 
+////    										"  " + bombBlock.getLocation().getBlockY() + "  count= " + count );
+//						}
 						
 						bomb.setPlacedBombBlock( bombBlock );
 						
@@ -1333,15 +1359,15 @@ public class PrisonUtilsMineBombs
 						//int throwSpeed = 2;
 						
 						
-						
+						// NOTE: we already got the correct mine:
 						// check if in a mine:
-						OnBlockBreakMines obbm = new OnBlockBreakMines();
-						Mine mine = obbm.findMine( sPlayer, bombBlock, null, null );
+//						OnBlockBreakMines obbm = new OnBlockBreakMines();
+//						Mine mine = obbm.findMine( sPlayer, bombBlock, null, null );
 						
-						if ( mine == null ) {
-							// Cannot set the bomb outside of a mine, so cancel:
-							return isABomb;
-						}
+//						if ( mine == null ) {
+//							// Cannot set the bomb outside of a mine, so cancel:
+//							return isABomb;
+//						}
 						
 						// Setting activated to true indicates the bomb is live and it has
 						// been removed from the player's inventory:
@@ -1389,7 +1415,7 @@ public class PrisonUtilsMineBombs
 							public void runDetonation() {
 								
 								// Submit the bomb's task to go off:
-								setoffBombDelayed( sPlayer, bomb, sBombBlock );
+								setoffBombDelayed( sPlayer, bomb, sBombBlock, mine );
 							}
 						};
 						
@@ -1453,6 +1479,37 @@ public class PrisonUtilsMineBombs
 		}
     	
     	return isABomb;
+	}
+
+	private SpigotBlock getNextBlockInTheMine(Mine mine, SpigotBlock bombBlock, int adjustY) {
+		
+		int yMin = (int) mine.getBounds().getyMin();
+		int yMax = (int) mine.getBounds().getyMax();
+		
+		int y = bombBlock.getLocation().getBlockY();
+		
+		int deltaY = adjustY( y, yMin, yMax, adjustY );
+		
+		
+		Block tempBlock = (Block) bombBlock.getLocation().getBlockAtDelta( 0, deltaY, 0 );
+		if ( tempBlock != null && tempBlock instanceof SpigotBlock ) {
+			bombBlock = (SpigotBlock) tempBlock;
+		}
+		return bombBlock;
+	}
+	
+	protected int adjustY( int y, int yMin, int yMax, int deltaY ) {
+		
+		int y2 = y + deltaY;
+		
+		if ( y2 < yMin ) {
+			deltaY += yMin - y2;
+		}
+		else if ( y2 > yMax ) {
+			deltaY -= y2 - yMax;
+		}
+		
+		return deltaY;
 	}
 	
 	
