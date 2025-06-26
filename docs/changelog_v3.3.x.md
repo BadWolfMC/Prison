@@ -14,7 +14,11 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-06-26
+# 3.3.0-alpha.19i 2025-06-26
+
+
+
+* **3.3.0-alpha.19i 2025-06-26**
 
 
 * **Mine Bombs: Bug fixes. There are a few bug fixes in these changes which were resulting in mine bombs not working at all, or causing some odd behaviors.**
