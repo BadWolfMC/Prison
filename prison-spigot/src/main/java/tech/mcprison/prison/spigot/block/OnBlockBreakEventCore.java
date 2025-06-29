@@ -333,21 +333,27 @@ public abstract class OnBlockBreakEventCore
 			.append( count )
 			.append( ":finished)" );
 		}
-				
+	
 	}
+	
+	
 	private List<SpigotBlock> finalizeBreakTheBlocksCollectEm( PrisonMinesBlockBreakEvent pmEvent ) {
 		List<SpigotBlock> blocks = new ArrayList<>();
 		
-		if ( pmEvent.getTargetBlock() != null && pmEvent.getTargetBlock().getMinedBlock() != null ) {
+		MineTargetPrisonBlock tBlock = pmEvent.getTargetBlock();
+		
+		if ( tBlock != null && tBlock.getMinedBlock() != null &&
+				tBlock.getPrisonBlock() != null &&
+				tBlock.getPrisonBlock().getBlockName() != null ) {
 			
 			SpigotBlock minedBlock = ((SpigotBlock) pmEvent.getTargetBlock().getMinedBlock());
 			
 			// Only add the minedBlock to the blocks list if it matches the expected targetBlock name, which
 			// indicates it has not been replaced by something else, such as the result of a block event.
-			if ( pmEvent.getTargetBlock().getPrisonBlock().getBlockName().equalsIgnoreCase( minedBlock.getBlockName() )) {
+			if ( tBlock.getPrisonBlock().getBlockName().equalsIgnoreCase( minedBlock.getBlockName() )) {
 				
 				blocks.add( minedBlock );
-				pmEvent.getTargetBlock().setAirBroke( true );
+				tBlock.setAirBroke( true );
 //				pmEvent.getTargetBlock().setMinedBlock( null );
 			}
 			

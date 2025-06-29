@@ -14,7 +14,12 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19i 2025-06-28
+# 3.3.0-alpha.19i 2025-06-29
+
+
+* **Mine Bombs: Fixed some issues with mine bombs, such as prison is now check all "throw" events, even if another plugin cancels it.**
+Eliminated a few NPEs since some of them are now being triggered since validation can be turned off.
+
 
 
 * **Mines: Support falling sand and player placed objects.**

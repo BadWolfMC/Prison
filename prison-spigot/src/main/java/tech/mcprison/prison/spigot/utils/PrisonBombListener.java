@@ -139,7 +139,7 @@ public class PrisonBombListener
 	 * 
 	 * @param event
 	 */
-	@EventHandler( priority = EventPriority.LOW )
+	@EventHandler( priority = EventPriority.LOW,  ignoreCancelled = false )
     public void mineBombThrowEvent( PlayerInteractEvent event ) {
 		
 		ItemStack iStack = event.getItem();

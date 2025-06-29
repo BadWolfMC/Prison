@@ -852,6 +852,25 @@ public class OnBlockBreakMines
 	 * <p>The function isBlockAMatch() should be used prior to calling this function.
 	 * </p>
 	 * 
+	 * <p>Note, it is now possible that block validation can be disabled.  If that is the case, then
+	 * the blocks may not match the same type as the targetBlock, or may not have been place in the 
+	 * mine by prison (ie.. a player or admin).
+	 * Therefore, actions should be based upon the actual block and not the targetBlock.
+	 * For this function, the targetBlock is only being used to identify if it were a custom
+	 * block type.  May want to remove dependency upon targetBlock for this check.  Like maybe use the
+	 * mined block to get the "core" prison block type to make that determination.
+	 * </p>
+	 * 
+	 * <p>Note: if the target block is a custom block, but yet the actual block is not, calling the
+	 * custom block's getDrop() will not produce the wrong drops.  It depends on the plugin handling
+	 * the drops, but it may return the bukkit drops, or no drops.
+	 * </p>
+	 * 
+	 * <p>NOTE: to better handle the situation where falling sand may not get the correct target block,
+	 * it may make sense to tag all placed blocks with an NBT tag to identify it's original location, 
+	 * then use that location for the correct target block.
+	 * </p>
+	 * 
 	 * @param bukkitDrops
 	 * @param targetBlock
 	 * @param itemInHand
@@ -864,6 +883,7 @@ public class OnBlockBreakMines
 		boolean results = false;
 
 		if ( targetBlock != null && 
+				targetBlock.getPrisonBlock() != null &&
 				targetBlock.getPrisonBlock().getBlockType().isCustomBlockType() ) {
 			
 			List<CustomBlockIntegration> cbIntegrations = 
