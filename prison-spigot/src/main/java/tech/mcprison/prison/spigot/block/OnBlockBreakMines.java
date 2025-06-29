@@ -653,7 +653,9 @@ public class OnBlockBreakMines
 //		    		}
 //
 //				}
-				else {
+				else if ( AutoFeaturesWrapper.getInstance().isBoolean( AutoFeatures.validateBlocksWerePlacedByPrison ) ) {
+					
+					// validate if the block being targeted is the one prison placed in the mine:
 					
 					MineTargetPrisonBlock targetBlock = mine.getTargetPrisonBlock( sBlock );
 					

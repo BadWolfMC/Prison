@@ -14,8 +14,14 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19i 2025-06-26
+# 3.3.0-alpha.19i 2025-06-28
 
+
+* **Mines: Support falling sand and player placed objects.**
+Prison normally does not support mining blocks that it did not place in the mine. The reason is to prevent players from getting credit and money for mining invalid blocks, of which, could lead to other problems.  But this also prevents mining sand blocks when they fall because their supporting blocks were removed.
+This change now turns off prisons validation of the blocks that are being mine, which will allow mining of fallen sand.  As a side effect, it will allow mining of any block found in the mine, for better or for worse.  
+To enable this, start prison so prison can modify the autoFeaturesConfig.yml file.  Then edit it and set the following setting to false:
+'validateBlocksWerePlacedByPrison: false'
 
 
 * **3.3.0-alpha.19i 2025-06-26**

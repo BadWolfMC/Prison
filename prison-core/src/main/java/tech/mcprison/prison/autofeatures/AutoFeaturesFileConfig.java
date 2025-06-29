@@ -167,6 +167,8 @@ public class AutoFeaturesFileConfig {
 		    	isCalculateXPEnabled(general, true),
 		    	givePlayerXPAsOrbDrops(general, false),
 		    	
+		    	validateBlocksWerePlacedByPrison(general, true),
+		    	
 		    	ifBlockIsAlreadyCountedThenCancelEvent(general, true),
 		    	
 		    	processMonitorEventsOnlyIfPrimaryBlockIsAIR(general, true),
