@@ -69,10 +69,16 @@ public class OnStartupRefreshBlockBreakCountSyncTask
 		setJobId( PrisonTaskSubmitter.runTaskLater( this, delay) );
 		
 		DecimalFormat dFmt = new DecimalFormat( "#,##0.0" );
+		DecimalFormat iFmt = new DecimalFormat( "#,##0" );
+		
+		long gapTicks = MineReset.MINE_RESET__AIR_COUNT_SUBMIT_GAP_TICKS;
 		
 		String msg = String.format(
-				"Startup Block Count Task Submitted to run in %s seconds.",
-				dFmt.format(delay / 20)
+				"&dStartup Block Count Task Submitted "
+				+ "&6to run in %s seconds, with a %s tick gap between "
+				+ "each task.",
+				dFmt.format(delay / 20),
+				iFmt.format( gapTicks )
 				);
 		
 		Output.get().logInfo( msg );
@@ -97,12 +103,17 @@ public class OnStartupRefreshBlockBreakCountSyncTask
 					m.getResetCount() == 0 
 					&& m.refreshAirCountSyncTaskCheckBeforeSubmit() ) {
 				
-				// Prevents the mine from being counted again:
+				// Prevents the mine from being counted again when the next
+				// check is ran.
 				m.setResetCount( 1 );
 				
 				countCurrentMine++;
 				
+				// Sets this mine to be processed next:
 				mine = m;
+				
+				// Added this mine to the processedMines list even though it has not
+				// been processed yet:
 				processedMines.add( m );
 				
 				break;
@@ -159,7 +170,8 @@ public class OnStartupRefreshBlockBreakCountSyncTask
 			
 			elapsedNanos = 0;
 			
-			delay = 2;
+			delay = MineReset.MINE_RESET__AIR_COUNT_SUBMIT_GAP_TICKS;
+//			delay = 10; // Delay of 10 ticks, or 1/2 a second
 		}
 
 		if ( mine != null ) {

@@ -91,7 +91,8 @@ public abstract class MineReset
 	public static final long MINE_RESET__PAGE_TIMEOUT_CHECK__BLOCK_COUNT = 250;
 	
 	
-	public static final long MINE_RESET__AIR_COUNT_BASE_DELAY = 30000L; // 30 seconds
+	public static final long MINE_RESET__AIR_COUNT_BASE_DELAY_TICKS = 6 * 20L; // 6 seconds
+	public static final long MINE_RESET__AIR_COUNT_SUBMIT_GAP_TICKS = 5; // 0.25 second
 	
 
 	private transient List<MineTargetPrisonBlock> mineTargetPrisonBlocks = null;

@@ -14,7 +14,11 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19i 2025-06-29
+# 3.3.0-alpha.19i 2025-06-30
+
+
+* **Mines: Startup air block counts: Changed slightly to start this task later, and to put a slightly longer delay between mine counts so it puts less load on the server.**
+
 
 
 * **Mine Bombs: Fixed some issues with mine bombs, such as prison is now check all "throw" events, even if another plugin cancels it.**
