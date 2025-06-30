@@ -289,6 +289,20 @@ public class MineBombData
 	private transient int taskId = -1;
 	
 	
+	private BombStatus bombStatus;
+	
+	public enum BombStatus {
+		unprocessed,
+		event_ignored,
+		event_not_enabled,
+		canceled,
+		no_access,
+		failed_validation,
+		monitor_successful,
+		successful
+		;
+	}
+	
 	public MineBombData() {
 		super();
 		
@@ -298,6 +312,7 @@ public class MineBombData
 		
 		this.allowedMines = new ArrayList<>();
 		this.preventedMines = new ArrayList<>();
+		
 	}
 	
 	
@@ -373,6 +388,7 @@ public class MineBombData
 		this.placedBombBlock = null;
 		this.placedBombLocation = null;
 		
+		this.bombStatus = BombStatus.unprocessed;
 	}
 	
 	
@@ -457,6 +473,8 @@ public class MineBombData
 			cloned.getVisualEffects().add( visualEffect.clone() );
 		}
 		
+		
+		cloned.setBombStatus( getBombStatus() );
 		
 		return cloned;
 	}
@@ -929,6 +947,14 @@ public class MineBombData
 	}
 	public void setTaskId(int taskId ) {
 		this.taskId = taskId;
+	}
+
+
+	public BombStatus getBombStatus() {
+		return bombStatus;
+	}
+	public void setBombStatus(BombStatus bombStatus) {
+		this.bombStatus = bombStatus;
 	}
 	
 }

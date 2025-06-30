@@ -17,6 +17,10 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19i 2025-06-30
 
 
+* **Mine bombs: Added a mine bombStatus so it's better documented if a mine bomb was successful or not.**
+Toned down the status message after a mine bomb is submitted since it sounded like it may always be a possible failure when it really isn't.  The bombStatus will now be a clearer indication on success or not.
+
+
 * **Mines: Startup air block counts: Changed slightly to start this task later, and to put a slightly longer delay between mine counts so it puts less load on the server.**
 
 

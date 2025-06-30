@@ -329,9 +329,9 @@ public class PrisonUtilsMineBombsTasks
 					
 					if ( Output.get().isDebug() ) {
 						Output.get().logDebug( "Mine Bomb's ExplosiveBlockBreakEvent has been canceled. " +
-								"This good and may mean it was processed successfully by prison "
-								+ "(look for block break events before this message), "
-								+ "or another plugin canceled it. "
+								"This may mean it was processed successfully by prison "
+								+ "(look for block break events before this message). "
+								+ "Mine Bomb status: " + bomb.getBombStatus().name()
 								);
 					}
 				}
@@ -342,7 +342,7 @@ public class PrisonUtilsMineBombsTasks
 					
 					if ( Output.get().isDebug() ) {
 						Output.get().logDebug( "Mine Bomb's ExplosiveBlockBreakEvent has NOT been canceled: "
-								+ "Bomb was not processed by prison.  This may be a problem.." );
+								+ "Mine Bomb status: " + bomb.getBombStatus().name() );
 					}
 				}
 

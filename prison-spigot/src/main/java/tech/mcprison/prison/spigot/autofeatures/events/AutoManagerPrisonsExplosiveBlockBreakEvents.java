@@ -16,6 +16,7 @@ import org.bukkit.plugin.PluginManager;
 import tech.mcprison.prison.autofeatures.AutoFeaturesFileConfig.AutoFeatures;
 import tech.mcprison.prison.autofeatures.AutoFeaturesWrapper;
 import tech.mcprison.prison.bombs.MineBombData;
+import tech.mcprison.prison.bombs.MineBombData.BombStatus;
 import tech.mcprison.prison.mines.features.MineBlockEvent.BlockEventType;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.SpigotPrison;
@@ -252,6 +253,7 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
 										bbPriority, true );
     	
 		if ( eventResults.isIgnoreEvent() ) {
+			if ( mineBomb != null ) mineBomb.setBombStatus( BombStatus.event_ignored );
 			return;
 		}
 		
@@ -297,6 +299,7 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
         	if ( checkIfNoAccess( pmEvent, start ) ) {
         		
         		e.setCancelled( true );
+        		if ( mineBomb != null ) mineBomb.setBombStatus( BombStatus.no_access );
         		return;
         	}
 			
@@ -326,6 +329,8 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
 			//       inventory stack, which will be more mine bombs if they had more 
 			//       than one.
 			if ( mineBomb != null ) {
+				
+				pmEvent.setForceIfAirBlock( true );
 				
 				pmEvent.setMineBomb( mineBomb );
 				
@@ -359,6 +364,8 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
 					e.setCancelled( true );
 				}
 				
+				if ( mineBomb != null ) mineBomb.setBombStatus( BombStatus.failed_validation );
+				
 				debugInfo.append( "(doAction failed validation) " );
 			}
 			
@@ -369,6 +376,7 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
     		else if ( pmEvent.getBbPriority().isMonitor() ) {
     			// Stop here, and prevent additional processing. 
     			// Monitors should never process the event beyond this.
+    			if ( mineBomb != null ) mineBomb.setBombStatus( BombStatus.monitor_successful );
     		}
 			
 			
@@ -391,6 +399,7 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
     			if ( cancelBy == EventListenerCancelBy.event ) {
     				
     				e.setCancelled( true );
+
     				debugInfo.append( "(event canceled) " );
     			}
     			else if ( cancelBy == EventListenerCancelBy.drops ) {
@@ -414,6 +423,7 @@ public class AutoManagerPrisonsExplosiveBlockBreakEvents
 					}
 
     			}
+    			if ( mineBomb != null ) mineBomb.setBombStatus( BombStatus.successful );
     		}
 			
     		if ( pmEvent.getSpigotPlayer().isInventoryFull() ) {
