@@ -14,7 +14,11 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19i 2025-06-30
+# 3.3.0-alpha.19i 2025-07-26
+
+
+* **Mine bombs: Fixed an issue with the item stack not correctly duplicating itself when transitioning from an item in hand to being placed or thrown.**
+As such, lore and NBTs were being lost or removed, which resulted in the mine bombs not being recognized when going through the explosion processing.
 
 
 * **Mine bombs: Added a mine bombStatus so it's better documented if a mine bomb was successful or not.**

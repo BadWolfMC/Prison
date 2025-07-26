@@ -197,6 +197,7 @@ public class PrisonUtilsMineBombs
 				int count = 0;
 				for (Entity entity : entities) {
 					SpigotEntity sEntity = (SpigotEntity) entity;
+					
 					SpigotArmorStand sArmorStand = new SpigotArmorStand( entity );
 					
 					String bombName = getBombName( sEntity, sArmorStand );
@@ -946,27 +947,52 @@ public class PrisonUtilsMineBombs
 				
 				if ( bomb != null ) {
 					
-					ItemStack bombs = getItemStackBomb( bomb, player );
+					SpigotItemStack bombs = getItemStackBomb( bomb, player, count );
 					
-					if ( bombs != null ) {
+//					ItemStack bombs = getItemStackBomb( bomb, player );
+					
+					String testBombName = PrisonNBTUtil.getNBTString( bombs.getBukkitStack(), MineBombs.MINE_BOMBS_NBT_KEY );
+					
+					if ( testBombName == null || 
+							testBombName.trim().length() == 0 ) {
+						String msg = "WARNING: The mine bomb give command failed to properly set the "
+								+ "internal NBT data to identify this item as a mine bomb. This will "
+								+ "fail to work. This is a failure of the NBT library that prison is using, "
+								+ "and it may need to be updated.";
+						sender.sendMessage(msg);
 						
-						SpigotItemStack sBombs = new SpigotItemStack( bombs );
-						
-						bombs.setAmount( count );
-						player.getInventory().addItem( sBombs );
+						Output.get().logWarn( msg );
+					}
+					
+					player.getInventory().addItem( bombs );
+					player.updateInventory();
+					
+//					else if ( bombs != null ) {
+//						
+//						bombs.setAmount( count );
 //						player.getWrapper().getInventory().addItem( bombs );
-						
-						player.getWrapper().updateInventory();
-//						player.updateInventory();
-					}
-					else {
-						
-						String message = "A mine bomb with the name of %s, has an invalid itemType value. " +
-								"'%s' does not exist in the XMaterial types. Contact Prison support for help " +
-								"in finding the correct values to use. Google: 'XSeries XMaterial'";
-						
-						sender.sendMessage( String.format( message, bombName, bomb.getItemType() ) );
-					}
+//						player.getWrapper().updateInventory();
+//						
+//						// NOTE: The following is not working... the NBTs are not 
+//						//       being copied over, so the mine bombs are losing their
+//						//       NBT signatures.
+////						SpigotItemStack sBombs = new SpigotItemStack( bombs );
+////						
+////						sBombs.setAmount( count );
+////						player.getInventory().addItem( sBombs );
+//////						player.getWrapper().getInventory().addItem( bombs );
+////						
+////						player.getWrapper().updateInventory();
+//////						player.updateInventory();
+//					}
+//					else {
+//						
+//						String message = "A mine bomb with the name of %s, has an invalid itemType value. " +
+//								"'%s' does not exist in the XMaterial types. Contact Prison support for help " +
+//								"in finding the correct values to use. Google: 'XSeries XMaterial'";
+//						
+//						sender.sendMessage( String.format( message, bombName, bomb.getItemType() ) );
+//					}
 					
 //					XMaterial xBomb = XMaterial.matchXMaterial( bomb.getItemType() ).orElse( null );
 //					
@@ -1048,20 +1074,30 @@ public class PrisonUtilsMineBombs
 	}
 	
 	
-	public ItemStack getItemStackBomb( MineBombData bombData, SpigotPlayer player ) {
-		ItemStack sItemStack = null;
+	/**
+	 * <p>This function will take the MineBombData and construct an SpigotItemStack for that
+	 * bomb.
+	 * </p>
+	 * 
+	 * @param bombData
+	 * @param player
+	 * @param count
+	 * @return
+	 */
+	public SpigotItemStack getItemStackBomb( MineBombData bombData, SpigotPlayer player, int count ) {
 		SpigotItemStack bombs = null;
 //		NBTItem nbtItem = null;
 		
 		XMaterial xBomb = XMaterial.matchXMaterial( bombData.getItemType() ).orElse( null );
 		
+//		ItemStack sItemStack;
 		if ( xBomb != null ) {
 			
 			
 			try {
 				
 				// Create the spigot/bukkit ItemStack:
-				sItemStack = xBomb.parseItem();
+				ItemStack sItemStack = xBomb.parseItem();
 				
 				if ( sItemStack != null ) {
 					
@@ -1073,6 +1109,8 @@ public class PrisonUtilsMineBombs
 			}
 			
 			if ( bombs != null ) {
+
+				bombs.setAmount( count );
 				
 				bombs.setDisplayName( bombData.getName() );
 
@@ -1087,39 +1125,106 @@ public class PrisonUtilsMineBombs
 //				if ( bomb.isGlowing() ) {
 //					bombs.addEnchantment(  );
 //				}
+
 				
-				List<String> lore = new ArrayList<>( bombData.getLore() );
+				// Add lore to the mine bomb's SpigotItemStack:
+				bombs.setLore( bombData.getLore() );
+				
+//				if ( Output.get().isDebug() ) {
+//					List<String> lore = new ArrayList<>();
+//					
+//					lore.add( "## Lore from bombdata: " );
+//					lore.addAll( bombData.getLore() );
+//					
+//					lore.add( "## Lore from bomb ItemStack: " );
+//					lore.addAll( bombs.getLore() );
+//					
+//					for (String l : lore ) {
+//						
+//						Output.get().logInfo( "Bomb name: %s  lore: "
+//								+ "bombName: &7%s&r &3::  nbt: &r\\Q%s\\E", 
+//								bombData.getNameTag(),
+//								l, l
+//								);
+//					}
+//				}
+				
+				
+				
+//				List<String> lore = new ArrayList<>( bombData.getLore() );
+//				for (String bLore : bombData.getLore()) {
+//					bombs.getLore();
+//				}
 				
 				// lore.add( 0, bombData.getLoreBombItemId() );
 				
-				bombs.setLore( lore );
+				{
+//					List<String> lore = bombs.getLore();
+//					
+//					lore.add( MINE_BOMBS_LORE_1 );
+//					lore.add( MINE_BOMBS_LORE_2_PREFIX + bombData.getName() );
+//					lore.add( " " );
+//					
+//					lore.add( "Size, Diameter: " + ( 1 + 2 * bomb.getRadius()) );
+//					lore.add( "Shape: " + bomb.getExplosionShape() );
+//					
+//					String[] desc = bomb.getDescription().split( " " );
+//					StringBuilder sb = new StringBuilder();
+//					
+//					for ( String d : desc ) {
+//						
+//						sb.append( d ).append( " " );
+//						
+//						if ( sb.length() > 30 ) {
+//							sb.insert( 0, "  " );
+//							
+//							lore.add( sb.toString() );
+//							sb.setLength( 0 );
+//						}
+//					}
+//					if ( sb.length() > 0 ) {
+//						sb.insert( 0, "  " );
+//						
+//						lore.add( sb.toString() );
+//					}
+////					lore.add( " " + bomb.getDescription() );
+//					
+//					lore.add( " " );
+//					
+//					bombs.setLore( lore );
+				}
+				
+//				bombs.setLore( lore );
 
 				// SpigotCompatibility.getInstance().setCustomModelData( bombs, bombData.getCustomModelData() );
 				
-				sItemStack = bombs.getBukkitStack();
-			}
-			
-			if ( sItemStack != null ) {
+//				sItemStack = bombs.getBukkitStack();
 				
-				// Set the NBT String key-value pair:
-				PrisonNBTUtil.setNBTString(sItemStack, MineBombs.MINE_BOMBS_NBT_KEY, bombData.getName() );
-				PrisonNBTUtil.setNBTString(sItemStack, MineBombs.MINE_BOMBS_NBT_OWNER_UUID, player.getUUID().toString() );
-				
-				
+				if ( bombs.getBukkitStack() != null ) {
+					
+					ItemStack sItemStack = bombs.getBukkitStack();
+					
+					// Set the NBT String key-value pair:
+					PrisonNBTUtil.setNBTString(sItemStack, MineBombs.MINE_BOMBS_NBT_KEY, bombData.getName() );
+					PrisonNBTUtil.setNBTString(sItemStack, MineBombs.MINE_BOMBS_NBT_OWNER_UUID, player.getUUID().toString() );
+					
+					
 //				nbtItem = new NBTItem( sItemStack, true );
 //				nbtItem.setString( MineBombs.MINE_BOMBS_NBT_BOMB_KEY, bombData.getName() );
-
-				
-				// Set the customModelData on the bomb to allow for custom skins:
-				SpigotCompatibility.getInstance().setCustomModelData( sItemStack, bombData.getCustomModelData() );
-
-				
-				if ( Output.get().isDebug() ) {
-					Output.get().logInfo( "getItemStackBombs ntb: %s", 
-							Text.translateAmpColorCodes( PrisonNBTUtil.nbtDebugString(sItemStack) )
-							 );
+					
+					
+					// Set the customModelData on the bomb to allow for custom skins:
+					SpigotCompatibility.getInstance().setCustomModelData( sItemStack, bombData.getCustomModelData() );
+					
+					
+					if ( Output.get().isDebug() ) {
+						Output.get().logInfo( "getItemStackBombs ntb: %s", 
+								Text.translateAmpColorCodes( PrisonNBTUtil.nbtDebugString(sItemStack) )
+								);
+					}
 				}
 			}
+			
 			
 		}
 		else {
@@ -1132,7 +1237,7 @@ public class PrisonUtilsMineBombs
 			Output.get().logError( message );
 		}
 		
-		return sItemStack;
+		return bombs;
 	}
 	
 	
@@ -1205,13 +1310,17 @@ public class PrisonUtilsMineBombs
 	 * @param bomb 
 	 * @param sBlock 
 	 * @param hand
+	 * @param owner 
+	 * @param thrower 
 	 * @return
 	 */
 	public boolean setBombInHand( SpigotPlayer sPlayer, 
 					Mine mine, 
 					MineBombData bomb, 
 					SpigotBlock sBlock, 
-					tech.mcprison.prison.spigot.compat.Compatibility.EquipmentSlot hand ) {
+					tech.mcprison.prison.spigot.compat.Compatibility.EquipmentSlot hand, 
+					String thrower, 
+					String owner ) {
 		boolean isABomb = false;
 		
 //		MineBombData bomb = getBombItem( player );
@@ -1275,7 +1384,7 @@ public class PrisonUtilsMineBombs
 //					MineBombs.addPlayerCooldown( sPlayer, bomb.getCooldownTicks() );
 					
 					SpigotItemStack bombs = new SpigotItemStack( 
-							getItemStackBomb( bomb, sPlayer ));
+							getItemStackBomb( bomb, sPlayer, 1 ));
 					
 					if ( bombs != null ) {
 						
@@ -1424,7 +1533,11 @@ public class PrisonUtilsMineBombs
 						// will submit the tasks, unless no animations are chosen.
 						BombAnimationsTask animationsTask = new BombAnimationsTask();
 						
-						animationsTask.animatorFactory( bomb, bombBlock, itemInHand, detonateBomb );
+						animationsTask.animatorFactory( bomb, bombBlock, itemInHand,
+								detonateBomb );
+						
+//						animationsTask.animatorFactory( bomb, bombBlock, itemInHand, 
+//								detonateBomb, thrower, owner );
 						
 
 						

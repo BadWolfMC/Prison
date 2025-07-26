@@ -22,6 +22,7 @@ import tech.mcprison.prison.Prison;
 import tech.mcprison.prison.bombs.MineBombCooldownException;
 import tech.mcprison.prison.bombs.MineBombData;
 import tech.mcprison.prison.bombs.MineBombs;
+import tech.mcprison.prison.bombs.MineBombs.AnimationArmorStandItemLocation;
 import tech.mcprison.prison.mines.data.Mine;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.SpigotPrison;
@@ -34,6 +35,7 @@ import tech.mcprison.prison.spigot.game.SpigotPlayer;
 import tech.mcprison.prison.spigot.game.entity.SpigotArmorStand;
 import tech.mcprison.prison.spigot.nbt.PrisonNBTUtil;
 import tech.mcprison.prison.util.Location;
+import tech.mcprison.prison.util.Text;
 
 /**
  * <p>This listener class handles the player's interaction with using a bomb.
@@ -100,13 +102,15 @@ public class PrisonBombListener
         		
 //        		MineBombData mineBomb = MineBombs.getInstance().findBombByName( sPlayer, bombName );
         		
+        		String thrower = player.getUniqueId().toString();
+        		String owner = PrisonNBTUtil.getNBTString(iStack, MineBombs.MINE_BOMBS_NBT_OWNER_UUID);
         		
         		PrisonNBTUtil.setNBTString(iStack, 
 		        				MineBombs.MINE_BOMBS_NBT_KEY, 
 		        				bombName );
         		PrisonNBTUtil.setNBTString(iStack, 
         						MineBombs.MINE_BOMBS_NBT_THROWER_UUID, 
-        						player.getUniqueId().toString() );
+        						thrower );
         		
         		Block targetBlock = event.getBlockAgainst();
         		
@@ -120,7 +124,7 @@ public class PrisonBombListener
         		EquipmentSlot hand = SpigotCompatibility.getInstance().getHand(event);
         		
         		boolean canceled = processBombTriggerEvent( player, mineBomb, 
-        				targetBlock, hand );
+        				targetBlock, hand, thrower, owner );
         		
         		if ( canceled ) {
         			event.setCancelled( canceled );
@@ -184,17 +188,25 @@ public class PrisonBombListener
         			
         			EquipmentSlot hand = SpigotCompatibility.getInstance().getHand(event);
         			
+        			
+        			
+        			final String thrower = sPlayer.getName();
+//        			final String thrower = PrisonNBTUtil.getNBTString( iStack, MineBombs.MINE_BOMBS_NBT_THROWER_UUID );
+        			
+        			final String owner = PrisonNBTUtil.getNBTString( iStack, MineBombs.MINE_BOMBS_NBT_OWNER_UUID);
+        			
+        		
+        			
+        			
         			PrisonNBTUtil.setNBTString(iStack, 
         					MineBombs.MINE_BOMBS_NBT_KEY, 
         					bombName );
         			PrisonNBTUtil.setNBTString(iStack, 
         					MineBombs.MINE_BOMBS_NBT_THROWER_UUID, 
-        					player.getUniqueId().toString() );
+        					thrower );
         			
         			SpigotLocation loc = new SpigotLocation( 
         					player.getEyeLocation().add( player.getLocation().getDirection() ));
-        			
-//        		XMaterial xMat = XMaterial.matchXMaterial(iStack);
         			
         			
         			ArmorStand armorStand = player.getWorld().spawn( 
@@ -206,9 +218,19 @@ public class PrisonBombListener
         			
         			
         			SpigotArmorStand sArmorStand = new SpigotArmorStand(armorStand);
+        			
         			sArmorStand.setNbtString( MineBombs.MINE_BOMBS_NBT_KEY, bombName );
-        			sArmorStand.setNbtString( MineBombs.MINE_BOMBS_NBT_THROWER_UUID, 
-        					player.getUniqueId().toString() );
+        			sArmorStand.setNbtString( MineBombs.MINE_BOMBS_NBT_THROWER_UUID, thrower );
+        			sArmorStand.setNbtString( MineBombs.MINE_BOMBS_NBT_OWNER_UUID, owner );
+        			
+        			
+        			if ( Output.get().isDebug() ) {
+        				String nbtJson = Text.translateAmpColorCodes( 
+        								PrisonNBTUtil.getNBTData( 
+        										sArmorStand.getBukkitEntity() ));
+        				Output.get().logInfo( "PrisonBombListener.mineBombThrowEvent ntb: %s", 
+        						 nbtJson );
+        			}
         			
         			
         			Vector velocity = player.getLocation().getDirection().multiply( 
@@ -320,7 +342,8 @@ public class PrisonBombListener
 //    									player.getInventory().removeItem( iStack );
 //    								}
 
-        												processBombTriggerEvent( sPlayer, mine, mineBomb, targetBlock, hand );
+        												processBombTriggerEvent( sPlayer, mine, mineBomb, targetBlock, 
+        														hand, thrower, owner );
         											}
         											
         										}
@@ -470,10 +493,14 @@ public class PrisonBombListener
 //            		}
             		
             		
+            		String thrower = player.getUniqueId().toString();
+            		String owner = PrisonNBTUtil.getNBTString(iStack, MineBombs.MINE_BOMBS_NBT_OWNER_UUID);
+            		
+            		
         			
         			EquipmentSlot hand = SpigotCompatibility.getInstance().getHand(event);
         			
-        			processBombTriggerEvent( player, mineBomb, targetBlock, hand );
+        			processBombTriggerEvent( player, mineBomb, targetBlock, hand, thrower, owner );
         			
         		}
         		else {
@@ -531,7 +558,9 @@ public class PrisonBombListener
 //	}
 	private boolean processBombTriggerEvent( Player player, 
 					MineBombData mineBomb, Block targetBlock,
-					EquipmentSlot hand ) {
+					EquipmentSlot hand, 
+					String thrower, 
+					String owner ) {
 		
 		SpigotPlayer sPlayer = new SpigotPlayer( player );
 		
@@ -554,18 +583,21 @@ public class PrisonBombListener
 		
 		Mine mine = getMine(sPlayer, mineBomb, sBlock );
 		
-		return mine == null ? false : processBombTriggerEvent( sPlayer, mine, mineBomb, sBlock, hand );
+		return mine == null ? false : processBombTriggerEvent( sPlayer, mine, mineBomb, sBlock, 
+							hand, thrower, owner );
 	}
 	
 	private boolean processBombTriggerEvent( SpigotPlayer sPlayer, 
 				Mine mine,
 				MineBombData mineBomb, 
 				SpigotBlock sBlock, 
-				EquipmentSlot hand ) {
+				EquipmentSlot hand, 
+				String thrower, 
+				String owner ) {
 		
 		boolean canceled = false;
 		
-		if ( getPrisonUtilsMineBombs().setBombInHand( sPlayer, mine, mineBomb, sBlock, hand ) ) {
+		if ( getPrisonUtilsMineBombs().setBombInHand( sPlayer, mine, mineBomb, sBlock, hand, thrower, owner ) ) {
 			
 			// The item was a bomb and it was activated.
 			// Cancel the event so the item will not be placed or processed farther.
