@@ -1805,6 +1805,7 @@ public class RankPlayer
 							"Please try restarting the server to see if that fixes the problem before contacting " +
 							"prison's support team.  Thanks!"
 								));
+			return null;
 		}
 		
 		Rank nRank = rankCurrent.getRank().getRankNext();

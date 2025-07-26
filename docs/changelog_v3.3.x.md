@@ -17,6 +17,11 @@ These change logs represent the work that has been going on within prison.
 # 3.3.0-alpha.19i 2025-07-26
 
 
+* **Players: Bug fix. If unable to get a player's default rank, then return a null from the function.**
+ It was recording that an error happened, but it was returning a null, but continuing on with the processing as if it has a valid rank.  This was not a commonly occurring bug, but was happening with edge case testing.
+
+
+
 * **Mine bombs: Fixed an issue with the item stack not correctly duplicating itself when transitioning from an item in hand to being placed or thrown.**
 As such, lore and NBTs were being lost or removed, which resulted in the mine bombs not being recognized when going through the explosion processing.
 
