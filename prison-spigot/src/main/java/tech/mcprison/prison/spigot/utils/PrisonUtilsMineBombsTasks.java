@@ -20,6 +20,7 @@ import tech.mcprison.prison.bombs.MineBombEffectsData.EffectState;
 import tech.mcprison.prison.bombs.MineBombs;
 import tech.mcprison.prison.bombs.MineBombs.ExplosionOrientation;
 import tech.mcprison.prison.bombs.MineBombs.ExplosionShape;
+import tech.mcprison.prison.mines.data.Mine;
 import tech.mcprison.prison.output.Output;
 import tech.mcprison.prison.spigot.SpigotPrison;
 import tech.mcprison.prison.spigot.api.ExplosiveBlockBreakEvent;
@@ -233,7 +234,8 @@ public class PrisonUtilsMineBombsTasks
 	}
 	
 	public boolean setoffBombDelayed( SpigotPlayer sPlayer, MineBombData bomb, // Item droppedBomb, 
-						SpigotBlock targetBlock ) {
+						SpigotBlock targetBlock,
+						Mine mine ) {
 		boolean results = false;
 		
 		final Location location = ( targetBlock.getLocation() == null ? 
@@ -257,11 +259,26 @@ public class PrisonUtilsMineBombsTasks
 				List<org.bukkit.block.Block> blocks = calculatBlocksForExplosion( bomb, location, mBombs );
 				
 				
+				if ( Output.get().isDebug() ) {
+					String msg = String.format( 
+							"PrisonUtilsMineBombsTasks: calculatedExplosion: Gathered blocks: initial block: %s  Mine: %s " +
+							"  isBlockInMine: %s   blocksInExplosion: %d",
+							targetBlock.getLocation().toWorldCoordinates(),
+							(mine == null ? "none" : mine.getTag()),
+							Boolean.toString( mine.isInMine( targetBlock )),
+							blocks.size()
+							
+							);
+					Output.get().logDebug( msg );
+				}
+				
+				
 //				SpigotBlock targetBlock = (SpigotBlock) world.getBlockAt( location );
 				
 				
 				ExplosiveBlockBreakEvent explodeEvent = new ExplosiveBlockBreakEvent( 
 						targetBlock.getWrapper(), sPlayer.getWrapper(), blocks );
+				
 				explodeEvent.setTriggeredBy( bomb.getName() );
 				explodeEvent.setMineBomb( bomb );
 				
@@ -295,18 +312,27 @@ public class PrisonUtilsMineBombsTasks
 				// Normally the explosion will ONLY work if the center target block was non-AIR.
 				// This setting allows the explosion to be processed even if it is air.
 				explodeEvent.setForceIfAirBlock( true );
+
 				
+				// Detonate bomb here!!
+				// Call the explodeEvent, of which, prison will handle the explosion.  If prison does not 
+				// cancel the event, then it was not able to use the bomb and the explosion failed.
 				Bukkit.getServer().getPluginManager().callEvent( explodeEvent );
 
 				// We want the event to be cancelled since that means prison processed it:
 				if ( explodeEvent.isCancelled() ) {
+					
+					// Run the finish event... after Prison exploded the bomb!
 					
 					// Run all of the EffectState.finished effects:
 					submitBombEffects( bomb, EffectState.finished, location );
 					
 					if ( Output.get().isDebug() ) {
 						Output.get().logDebug( "Mine Bomb's ExplosiveBlockBreakEvent has been canceled. " +
-								"It may have been processed successfully." );
+								"This may mean it was processed successfully by prison "
+								+ "(look for block break events before this message). "
+								+ "Mine Bomb status: " + bomb.getBombStatus().name()
+								);
 					}
 				}
 				else {
@@ -315,7 +341,8 @@ public class PrisonUtilsMineBombsTasks
 					//droppedBomb.remove();
 					
 					if ( Output.get().isDebug() ) {
-						Output.get().logDebug( "Mine Bomb's ExplosiveBlockBreakEvent has NOT been canceled." );
+						Output.get().logDebug( "Mine Bomb's ExplosiveBlockBreakEvent has NOT been canceled: "
+								+ "Mine Bomb status: " + bomb.getBombStatus().name() );
 					}
 				}
 

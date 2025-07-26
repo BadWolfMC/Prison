@@ -204,24 +204,38 @@ public class OnBlockBreakMines
 
 	}
 	
-	public Mine findMine( SpigotPlayer player, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	public Mine findMineIncludeTopBottomOfMine( SpigotPlayer player, SpigotBlock sBlock, 
+			List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
 	{
-		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent );
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, false );
+	}
+	
+	public Mine findMine( SpigotPlayer player, SpigotBlock sBlock, 
+								List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	{
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, true );
 	}
 	
 	public Mine findMine( Player player, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
 	{
-		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent );
+		return findMine( player.getUniqueId(), sBlock, altBlocksSource, pmEvent, true );
 	}
 	
-	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent )
+	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, 
+					List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent ) {
+		return findMine( playerUUID, sBlock, altBlocksSource, pmEvent, true );
+	}
+	public Mine findMine( UUID playerUUID, SpigotBlock sBlock, 
+					List<Block> altBlocksSource, PrisonMinesBlockBreakEvent pmEvent, boolean exact )
 	{
 //		Long playerUUIDLSB = Long.valueOf( playerUUID.getLeastSignificantBits() );
 
 		// Get the cached mine, if it exists:
 		Mine mine = getPlayerCache().get( playerUUID.toString() );
 		
-		if ( mine == null || sBlock != null && !mine.isInMineExact( sBlock.getLocation() ) )
+		if ( mine == null || sBlock != null && 
+				( exact && !mine.isInMineExact( sBlock.getLocation() ) || 
+				  !exact && !mine.isInMineIncludeTopBottomOfMine( sBlock.getLocation() ) ) )
 		{
 			// Look for the correct mine to use.
 			// Set mine to null so if cannot find the right one it will return a
@@ -240,7 +254,10 @@ public class OnBlockBreakMines
 				for ( Block bBlock : altBlocksSource )
 				{
 					SpigotBlock sBlockAltBlock = SpigotBlock.getSpigotBlock( bBlock );
-					mine = findMineLocation( sBlockAltBlock );
+					
+					mine = exact ? 
+								findMineLocation( sBlockAltBlock ) :
+								findMineLocationIncludeTopBottomOfMine( sBlockAltBlock );
 					if ( mine != null )
 					{
 
@@ -636,7 +653,9 @@ public class OnBlockBreakMines
 //		    		}
 //
 //				}
-				else {
+				else if ( AutoFeaturesWrapper.getInstance().isBoolean( AutoFeatures.validateBlocksWerePlacedByPrison ) ) {
+					
+					// validate if the block being targeted is the one prison placed in the mine:
 					
 					MineTargetPrisonBlock targetBlock = mine.getTargetPrisonBlock( sBlock );
 					
@@ -833,6 +852,25 @@ public class OnBlockBreakMines
 	 * <p>The function isBlockAMatch() should be used prior to calling this function.
 	 * </p>
 	 * 
+	 * <p>Note, it is now possible that block validation can be disabled.  If that is the case, then
+	 * the blocks may not match the same type as the targetBlock, or may not have been place in the 
+	 * mine by prison (ie.. a player or admin).
+	 * Therefore, actions should be based upon the actual block and not the targetBlock.
+	 * For this function, the targetBlock is only being used to identify if it were a custom
+	 * block type.  May want to remove dependency upon targetBlock for this check.  Like maybe use the
+	 * mined block to get the "core" prison block type to make that determination.
+	 * </p>
+	 * 
+	 * <p>Note: if the target block is a custom block, but yet the actual block is not, calling the
+	 * custom block's getDrop() will not produce the wrong drops.  It depends on the plugin handling
+	 * the drops, but it may return the bukkit drops, or no drops.
+	 * </p>
+	 * 
+	 * <p>NOTE: to better handle the situation where falling sand may not get the correct target block,
+	 * it may make sense to tag all placed blocks with an NBT tag to identify it's original location, 
+	 * then use that location for the correct target block.
+	 * </p>
+	 * 
 	 * @param bukkitDrops
 	 * @param targetBlock
 	 * @param itemInHand
@@ -845,6 +883,7 @@ public class OnBlockBreakMines
 		boolean results = false;
 
 		if ( targetBlock != null && 
+				targetBlock.getPrisonBlock() != null &&
 				targetBlock.getPrisonBlock().getBlockType().isCustomBlockType() ) {
 			
 			List<CustomBlockIntegration> cbIntegrations = 
@@ -968,6 +1007,11 @@ public class OnBlockBreakMines
 	private Mine findMineLocation( SpigotBlock block ) {
 		return getPrisonMineManager() == null || block == null || block.getLocation() == null ? 
 				null : getPrisonMineManager().findMineLocationExact( block.getLocation() );
+	}
+	
+	private Mine findMineLocationIncludeTopBottomOfMine( SpigotBlock block ) {
+		return getPrisonMineManager() == null || block == null || block.getLocation() == null ? 
+				null : getPrisonMineManager().findMineLocationIncludeTopBottomOfMine( block.getLocation() );
 	}
 	
 

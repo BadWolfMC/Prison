@@ -417,32 +417,42 @@ public class SpigotItemStack
 	@Override
 	public void setDisplayName( String displayName ) {
 		
-		ItemMeta meta = getMeta();
-		if ( meta != null && displayName != null && displayName.trim().length() > 0 ) {
+		if ( getBukkitStack() != null ) {
 			
-			meta.setDisplayName( Text.translateAmpColorCodes(displayName) );
+			ItemMeta meta = getMeta();
+			if ( meta != null && displayName != null && displayName.trim().length() > 0 ) {
+				
+				meta.setDisplayName( Text.translateAmpColorCodes(displayName) );
+				
+				getBukkitStack().setItemMeta( meta );
+			}
 		}
-
-		getBukkitStack().setItemMeta( meta );
 		
 		super.setDisplayName( displayName );
 	}
 	
 	@Override
 	public void setLore( List<String> lores ) {
-		List<String> updatedLores = new ArrayList<>();
 		
-		ItemMeta meta = getMeta();
-		if ( meta != null && lores != null && lores.size() > 0 ) {
+		if ( getBukkitStack() != null ) {
 			
-			for ( String lore : lores ) {
-				updatedLores.add( Text.translateAmpColorCodes(lore) );
+			ItemMeta meta = getMeta();
+			if ( meta != null && lores != null && lores.size() > 0 ) {
+				
+				List<String> updatedLores = new ArrayList<>();
+				
+				for ( String lore : lores ) {
+					updatedLores.add( Text.translateAmpColorCodes(lore) );
+				}
+				
+				meta.setLore( updatedLores );
+				
+				getBukkitStack().setItemMeta( meta );
+				
+				getLore().addAll( updatedLores );
+				
 			}
-			
-			meta.setLore( updatedLores );
 		}
-		
-		getBukkitStack().setItemMeta( meta );
 		
 		//super.setLore( updatedLores );
 	}
@@ -548,31 +558,34 @@ public class SpigotItemStack
 		
 		sb.append( getName() );
 
-		ItemMeta meta = getMeta();
-		if ( meta != null && 
-				meta.getEnchants() != null &&
-				meta.getEnchants().size() > 0 ) {
-			sb.append( " " );
+		if ( getBukkitStack() != null ) {
 			
-			StringBuilder sbE = new StringBuilder();
-			Set<Enchantment> keys = meta.getEnchants().keySet();
-			for (Enchantment key : keys) {
-				if ( sbE.length() > 0 ) {
-					sbE.append(",");
-				}
-				String name = key.toString();
-				name = name.substring(name.indexOf(" ") + 1, name.length() - 1);
+			ItemMeta meta = getMeta();
+			if ( meta != null && 
+					meta.getEnchants() != null &&
+					meta.getEnchants().size() > 0 ) {
+				sb.append( " " );
 				
-				Integer level = meta.getEnchants().get(key);
-				sbE.append( name );
-				sbE.append(":");
-				sbE.append( level );
-			}
-			
-			if ( sbE.length() > 0 ) {
-				sb.append("(");
-				sb.append( sbE );
-				sb.append(")");
+				StringBuilder sbE = new StringBuilder();
+				Set<Enchantment> keys = meta.getEnchants().keySet();
+				for (Enchantment key : keys) {
+					if ( sbE.length() > 0 ) {
+						sbE.append(",");
+					}
+					String name = key.toString();
+					name = name.substring(name.indexOf(" ") + 1, name.length() - 1);
+					
+					Integer level = meta.getEnchants().get(key);
+					sbE.append( name );
+					sbE.append(":");
+					sbE.append( level );
+				}
+				
+				if ( sbE.length() > 0 ) {
+					sb.append("(");
+					sb.append( sbE );
+					sb.append(")");
+				}
 			}
 		}
 		

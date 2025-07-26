@@ -333,21 +333,27 @@ public abstract class OnBlockBreakEventCore
 			.append( count )
 			.append( ":finished)" );
 		}
-				
+	
 	}
+	
+	
 	private List<SpigotBlock> finalizeBreakTheBlocksCollectEm( PrisonMinesBlockBreakEvent pmEvent ) {
 		List<SpigotBlock> blocks = new ArrayList<>();
 		
-		if ( pmEvent.getTargetBlock() != null && pmEvent.getTargetBlock().getMinedBlock() != null ) {
+		MineTargetPrisonBlock tBlock = pmEvent.getTargetBlock();
+		
+		if ( tBlock != null && tBlock.getMinedBlock() != null &&
+				tBlock.getPrisonBlock() != null &&
+				tBlock.getPrisonBlock().getBlockName() != null ) {
 			
 			SpigotBlock minedBlock = ((SpigotBlock) pmEvent.getTargetBlock().getMinedBlock());
 			
 			// Only add the minedBlock to the blocks list if it matches the expected targetBlock name, which
 			// indicates it has not been replaced by something else, such as the result of a block event.
-			if ( pmEvent.getTargetBlock().getPrisonBlock().getBlockName().equalsIgnoreCase( minedBlock.getBlockName() )) {
+			if ( tBlock.getPrisonBlock().getBlockName().equalsIgnoreCase( minedBlock.getBlockName() )) {
 				
 				blocks.add( minedBlock );
-				pmEvent.getTargetBlock().setAirBroke( true );
+				tBlock.setAirBroke( true );
 //				pmEvent.getTargetBlock().setMinedBlock( null );
 			}
 			
@@ -440,6 +446,13 @@ public abstract class OnBlockBreakEventCore
 		debugInfo.append( "itemInHand=[" +
 					( itemInHand == null ? "AIR" : itemInHand.getDebugInfo()) + "] ");
 		
+		boolean validateBlocksWerePlacedByPrison = isBoolean( AutoFeatures.validateBlocksWerePlacedByPrison );
+		if ( !validateBlocksWerePlacedByPrison ) {
+			pmEvent.setDebugColorCodeWarning();
+			debugInfo.append( "(TargetBlock match requirement is disabled [validateBlocksWerePlacedByPrison: false]) " );
+			pmEvent.setDebugColorCodeDebug();
+		}
+		
 		
 		// Since BlastUseEvent (crazy enchant) does not identify the block that is initially 
 		// broke, an explosion for them is greater than 1.
@@ -491,7 +504,8 @@ public abstract class OnBlockBreakEventCore
 			// If MONITOR or BLOCKEVENTS or etc... and block does not match, and if the block is AIR,
 			// and the block has not been mined before, then allow the breakage by 
 			// setting bypassMatchedBlocks to true to allow normal processing:
-			if ( !matchedBlocks &&
+			if ( !validateBlocksWerePlacedByPrison ||
+					!matchedBlocks &&
 					targetBlock != null &&
 					!targetBlock.isMined() && 
 					sBlockHit.isAir() &&
@@ -530,7 +544,7 @@ public abstract class OnBlockBreakEventCore
 			// NOTE: for the primary block pmEvent.getSpigotBlock() the unbreakable will be checked later:
 			if ( targetBlock != null && sBlockHit != null ) {
 				
-				if ( !targetBlock.isMined() || !targetBlock.isAirBroke() ) {
+				if ( !validateBlocksWerePlacedByPrison || !targetBlock.isMined() || !targetBlock.isAirBroke() ) {
 				
 		    		// The field isMined() is used to "reserve" a block to indicate that it is in 
 		    		// the stages of being processed, since much later in the processing will the
@@ -696,13 +710,13 @@ public abstract class OnBlockBreakEventCore
 								noTargetBlock++;
 							}
 							
-							else if ( targetExplodedBlock.isMined() ) {
+							else if ( validateBlocksWerePlacedByPrison && targetExplodedBlock.isMined() ) {
 								
 								alreadyMined++;
 							}
 							else {
 								
-								if ( !targetExplodedBlock.isMined() ) {
+								if ( !validateBlocksWerePlacedByPrison || !targetExplodedBlock.isMined() ) {
 									
 									// Check to make sure the block is the same block that was placed there.
 									// If not, then do not process it.

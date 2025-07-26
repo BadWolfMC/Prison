@@ -14,7 +14,45 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19h 2025-06-22
+# 3.3.0-alpha.19i 2025-07-26
+
+
+* **Players: Bug fix. If unable to get a player's default rank, then return a null from the function.**
+ It was recording that an error happened, but it was returning a null, but continuing on with the processing as if it has a valid rank.  This was not a commonly occurring bug, but was happening with edge case testing.
+
+
+
+* **Mine bombs: Fixed an issue with the item stack not correctly duplicating itself when transitioning from an item in hand to being placed or thrown.**
+As such, lore and NBTs were being lost or removed, which resulted in the mine bombs not being recognized when going through the explosion processing.
+
+
+* **Mine bombs: Added a mine bombStatus so it's better documented if a mine bomb was successful or not.**
+Toned down the status message after a mine bomb is submitted since it sounded like it may always be a possible failure when it really isn't.  The bombStatus will now be a clearer indication on success or not.
+
+
+* **Mines: Startup air block counts: Changed slightly to start this task later, and to put a slightly longer delay between mine counts so it puts less load on the server.**
+
+
+
+* **Mine Bombs: Fixed some issues with mine bombs, such as prison is now check all "throw" events, even if another plugin cancels it.**
+Eliminated a few NPEs since some of them are now being triggered since validation can be turned off.
+
+
+
+* **Mines: Support falling sand and player placed objects.**
+Prison normally does not support mining blocks that it did not place in the mine. The reason is to prevent players from getting credit and money for mining invalid blocks, of which, could lead to other problems.  But this also prevents mining sand blocks when they fall because their supporting blocks were removed.
+This change now turns off prisons validation of the blocks that are being mine, which will allow mining of fallen sand.  As a side effect, it will allow mining of any block found in the mine, for better or for worse.  
+To enable this, start prison so prison can modify the autoFeaturesConfig.yml file.  Then edit it and set the following setting to false:
+'validateBlocksWerePlacedByPrison: false'
+
+
+* **3.3.0-alpha.19i 2025-06-26**
+
+
+* **Mine Bombs: Bug fixes. There are a few bug fixes in these changes which were resulting in mine bombs not working at all, or causing some odd behaviors.**
+One internal change was to pass the mine in to more functions so some of the processes can be more mine aware, and to prevent trying to find the mine a second time. Benefit is reduced processing and slightly faster speeds.
+One issue was that the initial block being processed for the explosion was not actually in the mine when it was on the surface, so prison would ignore that event. Fix was to shift the block down in to the mine so it would be usable. This was primarily when the Y-offset was set to ZERO.  If it was any negative value, then the bombs would work well, but zero was the default value.
+Some messages sent to the console have been enhanced to provide better clues with what's happening when in debug mode.  So if it is a config setting that is preventing the bomb from being tied to the mine, it will be more obvious.
 
 
 * **Locations: Fixed a potential problem with getting the wrong block, or processing the wrong block.**
