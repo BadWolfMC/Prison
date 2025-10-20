@@ -52,7 +52,7 @@ java {
 
 repositories {
 	    
-    maven { url = "https://hub.spigotmc.org/nexus/content/groups/public" }
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
 
 
     maven { 
