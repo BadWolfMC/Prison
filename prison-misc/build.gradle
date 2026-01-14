@@ -42,13 +42,14 @@ java {
 repositories {
 
 	maven {
-	    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+	    url = 'https://repo.papermc.io/repository/maven-public/'
 	
 	    // As of Gradle 5.1, you can limit this to only those
 	    // dependencies you expect from it
 	    content {
 	      includeGroup 'org.bukkit'
-	      includeGroup 'org.spigotmc'
+	      includeGroup 'com.destroystokyo.paper'
+		  includeGroup 'io.papermc.paper'
 	    }
 	 }
 
@@ -89,7 +90,7 @@ dependencies {
 	implementation 'org.jetbrains:annotations:24.0.1'
 
 
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT'
 
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
