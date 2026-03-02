@@ -36,7 +36,7 @@ gson = "2.13.2"
 spiget = "1.4.6-SNAPSHOT"
 xseries = "11.3.0"
 junit = "4.12"
-guava = "31.1-jre"
+guava = "33.5.0-jre"
 spigotApi = "1.13.2-R0.1-SNAPSHOT"
 
 nbtApi = "2.15.5"
