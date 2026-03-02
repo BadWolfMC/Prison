@@ -95,7 +95,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/com.sk89q.worldedit/worldedit-core
 	//   Artifact located at repo: https://maven.enginehub.org/repo/
-	implementation 'com.sk89q.worldedit:worldedit-core:6.0.1'
+	implementation 'com.sk89q.worldedit:worldedit-core:7.1.0'
 	//implementation 'com.sk89q.worldedit:worldedit-core:7.2.15'
 	
 	// https://mvnrepository.com/artifact/com.sk89q.worldedit/worldedit-bukkit
