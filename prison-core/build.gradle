@@ -44,11 +44,11 @@ dependencies {
 
 	implementation( libs.gson )
 
-	implementation 'org.json:json:20230227'
+	implementation 'org.json:json:20251224'
 	
 	implementation fileTree(dir: 'lib', 
     			include: ['PrivateBin-java-1.1-SNAPSHOT.jar'
-    						, 'json-20230227.jar'
+    						, 'json-20251224.jar'
     						])
 	
 }
