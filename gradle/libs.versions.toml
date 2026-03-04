@@ -37,7 +37,7 @@ spiget = "1.4.6-SNAPSHOT"
 xseries = "11.3.0"
 junit = "4.12"
 guava = "33.5.0-jre"
-spigotApi = "1.13.2-R0.1-SNAPSHOT"
+spigotApi = "1.21.11-R0.2-SNAPSHOT"
 
 nbtApi = "2.15.5"
 #nbtApi = "2.15.3"
