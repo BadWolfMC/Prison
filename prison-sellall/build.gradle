@@ -50,7 +50,7 @@ dependencies {
 //	implementation 'com.github.cryptomorin:XSeries:9.10.0'
     
 
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 shadowJar {
