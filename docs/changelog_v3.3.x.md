@@ -14,7 +14,47 @@
 These change logs represent the work that has been going on within prison. 
 
 
-# 3.3.0-alpha.19j 2026-02-24
+# 3.3.0-alpha.19j 2026-03-07
+
+
+* **Bug fix in the ChatTest Junit test. When I was cleaning up that source I accidentally introduced a stray '.'.**
+
+
+* **Prison Cleanup: prison-core: Removed obsolete and unneeded comments and fix indentation where needed.** Fifth part.
+
+
+* **Prison Cleanup: prison-core: Removed obsolete and unneeded comments and fix indentation where needed.** Fourth part.
+
+
+* **Prison Cleanup: prison-core: Removed obsolete and unneeded comments and fix indentation where needed.** Third part.
+
+
+* **Prison Cleanup: prison-core: Removed obsolete and unneeded comments and fix indentation where needed.** Second part.
+
+
+* **config.yml: change the default setting on adding new players on startup.  This is a major problem on large servers.**
+
+
+* **Design documents: Starting to create some of the design and planning documents that will be needed in the next few phrases of Prison.**
+
+
+* **Prison Cleanup: prison-core: Removed obsolete and unneeded comments and fix indentation where needed.** First part.
+
+
+* **Removed some uses of the old block model. Breaking change: This removal should not actually break anything, but if upgrading from a version using the old block models, upgrade to an earlier release first to take advantage of the automatic conversion.**
+
+* **Removed a few other unused source related to the old non-functional troubleshooting.**
+
+
+* **Renamed an enum to BlockEventCustomPlaceholders since it was not clear it was related to block events and that this has nothing to do with the standard placeholders.**
+
+
+* **Prison Cleanup: prison-ranks: Removed obsolete and unneeded comments and fix indentation where needed.**
+
+* **Prison Cleanup: prison-mines: Removed obsolete and unneeded comments and fix indentation where needed.**
+
+
+* **General cleanup: these are works in progress (wip) that have not been finalized.** If it's source, its been moved to a package with .wip.in the name.  These may be deleted in the future or they could be used.
 
 
 
