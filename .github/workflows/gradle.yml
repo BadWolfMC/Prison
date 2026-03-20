@@ -1,6 +1,10 @@
 name: Prison Build
 
-on: [push]
+on:
+  push:
+    branches: [ "bleeding" ]
+  pull_request:
+    branches: [ "bleeding" ]
 
 jobs:
   build:
