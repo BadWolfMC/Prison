@@ -100,7 +100,7 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/com.sk89q.worldedit/worldedit-bukkit
 	//   Artifact located at repo: https://maven.enginehub.org/repo/
-	compileOnly 'com.sk89q.worldedit:worldedit-bukkit:6.1.5'
+	compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.1.0'
 	//compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.15'
 
 
